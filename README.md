@@ -2,7 +2,7 @@
 My Bitburner Scripts
 
 ## List of scripts
-1. autostart.js: 
+1. autostart.js: starts coordinate.js, purchase.ks, report.js, install.js, restart.js, trade.js, spawn.js
 1. coordinate.js: populates port with servers for hack.js and self.js to hack - weighted towards optimatal hacking level
 1. earlyTrade.js: runs Stock Market trades pre getting full TIX API access
 1. gainrep.js: Changes 'home' plus all 'markwr' purchased servers to gaining rep
