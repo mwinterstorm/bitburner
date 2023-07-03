@@ -1,4 +1,7 @@
 const commission = 100000;
+var stocksExist = true
+var TotalProfit = 0
+var StockNumber = 0
 
 export async function main(ns) {
 	ns.disableLog("ALL");
@@ -6,16 +9,17 @@ export async function main(ns) {
 	await ns.sleep(100);
 	ns.moveTail(900, 25)
 	ns.resizeTail(330, 300)
-
-	while (true) {
+	while (stocksExist == true) {
 		tendStocks(ns);
 		await ns.sleep(5 * 1000);
-	}
+	} 
+	ns.print("All Stocks Sold for $" + ns.formatNumber(TotalProfit, 4, 1000, true))
 }
 
 function tendStocks(ns) {
 	ns.print("");
 	var stocks = getAllStocks(ns);
+
     var overallValue = 0
 	for (const stock of stocks) {
 		if (stock.profit > 2 * commission) {
@@ -25,14 +29,20 @@ function tendStocks(ns) {
 			const saleProfit = saleTotal - saleCost - 2 * commission;
 			stock.shares = 0;
 			ns.print(`SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`);
+			TotalProfit += saleProfit
+			--StockNumber
 		} else if (stock.longShares >= 1) {
 			const saleProfit = ((stock.bidPrice - stock.longPrice) * stock.longShares) - (2 * commission);
 			const stockValue = (stock.bidPrice * stock.longShares)
 			ns.print(`FAIL ${stock.summary}: ${ns.formatNumber(saleProfit, 4, 1000, true)} of ${ns.formatNumber(stockValue, 4, 1000, true)}`)
             overallValue += stockValue
+			++StockNumber
 		}
 	}
     ns.print("SELLING: Value remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
+	if (StockNumber == 0) {
+		stocksExist = false
+	}
 }
 
 export function getAllStocks(ns) {
