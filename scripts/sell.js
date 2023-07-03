@@ -4,7 +4,7 @@ export async function main(ns) {
 	ns.disableLog("ALL");
 	ns.tail();
 	await ns.sleep(100);
-	ns.moveTail(900, 0)
+	ns.moveTail(900, 25)
 	ns.resizeTail(330, 300)
 
 	while (true) {

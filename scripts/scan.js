@@ -2,6 +2,9 @@
 export async function main(ns) {
 	ns.disableLog("ALL");
 	ns.tail();
+	await ns.sleep(100);
+	ns.moveTail(85, 495)
+	ns.resizeTail(600, 300)
 	let host = "home";
 	var servers = ns.scan(host);
 	var target = ["run4theh111z", "I.I.I.I", "avmnite-02h", "CSEC", "The-Cave"];
@@ -12,7 +15,6 @@ export async function main(ns) {
 		ns.print("INFO Scanning for: " + target[t])
 		await firstpass(target[t])
 		await ns.sleep(500)
-
 	}
 
 	function setuppass(ns) {

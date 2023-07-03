@@ -1,7 +1,7 @@
 /** @param {NS} ns */
 export async function main(ns) {
     ns.disableLog("ALL")
-    ns.tail()
+    // ns.tail()
     while (true) {
         var servers = ns.scan()
         for (let i = 0; i < servers.length; i++) {

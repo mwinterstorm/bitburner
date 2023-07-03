@@ -22,5 +22,4 @@ My Bitburner Scripts
 ## To do
 1. install.js:
     1. get auto re running periodically
-1. scan.js:
-    1. also auto scan for nearby servers
+

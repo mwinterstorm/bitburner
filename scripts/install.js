@@ -2,6 +2,9 @@
 export async function main(ns) {
 	ns.disableLog("ALL")
 	ns.tail()
+	await ns.sleep(100);
+	ns.moveTail(85, 495)
+	ns.resizeTail(600, 300)
 	const files = ["self.js"]
 	const servers = ns.scan()
 	const hacklev = ns.getHackingLevel()
@@ -30,7 +33,6 @@ export async function main(ns) {
 				}
 			} else {
 				let portreq = ns.getServerNumPortsRequired(servers[i])
-				// ns.print("pr" + portreq + "hl" + hacks.length)
 				if (portreq <= hacks.length) {
 					for (let t = 0; t < hacks.length; t++) {
 						if (hacks[t] == "BruteSSH.exe") {
