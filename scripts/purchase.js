@@ -19,14 +19,13 @@ export async function main(ns) {
 				ns.scp(files, hostname);
 				await ns.exec("spawn.js", hostname);
 				await ns.print("SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM") 
-				await ns.sleep(2000)
+				await ns.sleep(1000)
 				++i;
-				await ns.sleep(2001);
+				await ns.sleep(1001);
 			}
-			await ns.sleep(2002);
+			await ns.sleep(1002);
 		}
-		// ++n
-		await ns.sleep(2092);
+		await ns.sleep(1092);
 
 	}
 	// ONCE HAVE MAX SERVER - UPGRADE
@@ -51,22 +50,22 @@ export async function main(ns) {
 						await ns.scriptKill("hack.js", hostname)
 						await ns.scp(files, hostname);
 						ns.exec("spawn.js", hostname);
-						await ns.sleep(2003)
+						await ns.sleep(1003)
 					}
 				} else {
 					await ns.print("WARN " + hostname + " is fully upgraded")
 					if (maxed.includes(hostname) != true) {
 						maxed.push(hostname)
 					}
-					await ns.sleep(2004)
+					await ns.sleep(1004)
 				}
 				++i;
-				await ns.sleep(2005)
+				await ns.sleep(1005)
 			}
-			await ns.sleep(2006)
+			await ns.sleep(1006)
 		}
-		await ns.sleep(2007)
+		await ns.sleep(1007)
 	}
-	await ns.sleep(2008)
+	await ns.sleep(1008)
 	await ns.print("SUCCESS All servers fully upgraded")
 }
