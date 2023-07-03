@@ -19,14 +19,11 @@ export async function main(ns) {
 				ns.scp(files, hostname);
 				await ns.exec("spawn.js", hostname);
 				await ns.print("SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM") 
-				await ns.sleep(1000)
 				++i;
 				await ns.sleep(1001);
 			}
-			await ns.sleep(1002);
 		}
-		await ns.sleep(1092);
-
+		await ns.sleep(1002);
 	}
 	// ONCE HAVE MAX SERVER - UPGRADE
 	if (ns.getPurchasedServers().length == numberServers) {
@@ -57,15 +54,12 @@ export async function main(ns) {
 					if (maxed.includes(hostname) != true) {
 						maxed.push(hostname)
 					}
-					await ns.sleep(1004)
 				}
 				++i;
-				await ns.sleep(1005)
+				await ns.sleep(1004)
 			}
-			await ns.sleep(1006)
 		}
-		await ns.sleep(1007)
 	}
-	await ns.sleep(1008)
+	await ns.sleep(1005)
 	await ns.print("SUCCESS All servers fully upgraded")
 }
