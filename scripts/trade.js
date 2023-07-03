@@ -7,6 +7,8 @@ const commission = 100000;
 var tradeActive = false;
 var tradeMoney = 0
 var money = 0
+var overallValue = 0;
+
 
 export async function main(ns) {
     ns.disableLog("ALL");
@@ -14,7 +16,8 @@ export async function main(ns) {
 
     while (true) {
         money = ns.getServerMoneyAvailable("home");
-        tradeMoney = money / 2
+        tradeMoney = ((overallValue + money) / 2) - overallValue
+        overallValue = 0
         tendStocks(ns);
         await ns.sleep(6 * 1000);
     }
@@ -28,7 +31,6 @@ function tendStocks(ns) {
 
     var longStocks = new Set();
     var shortStocks = new Set();
-    var overallValue = 0;
 
     for (const stock of stocks) {
         if (stock.longShares > 0) {
@@ -74,7 +76,8 @@ function tendStocks(ns) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.askPrice));
                 if (ns.stock.buyStock(stock.sym, sharesToBuy) > 0) {
                     ns.print(`WARN ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4,1000,true)}`);
-                    tradeMoney = tradeMoney - (sharesToBuy * stock.askPrice)
+                    tradeMoney -= (sharesToBuy * stock.askPrice) + commission
+                    overallValue += (sharesToBuy * stock.askPrice);
                 }
             }
         }
@@ -85,7 +88,8 @@ function tendStocks(ns) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.bidPrice));
                 if (ns.stock.buyShort(stock.sym, sharesToBuy) > 0) {
                     ns.print(`WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
-                    tradeMoney = tradeMoney - (sharesToBuy * stock.bidPrice)
+                    tradeMoney = tradeMoney - ((sharesToBuy * stock.bidPrice) + commission)
+                    overallValue += (sharesToBuy * stock.bidPrice)
                 }
             }
         }
@@ -95,21 +99,6 @@ function tendStocks(ns) {
         tradeActive = true
     } else {
         tradeActive = false
-    }
-
-    // send stock market manipulation orders to hack manager
-    var growStockPort = ns.getPortHandle(1); // port 1 is grow
-    var hackStockPort = ns.getPortHandle(2); // port 2 is hack
-    if (growStockPort.empty() && hackStockPort.empty()) {
-        // only write to ports if empty
-        for (const sym of longStocks) {
-            //ns.print("INFO grow " + sym);
-            growStockPort.write(getSymServer(sym));
-        }
-        for (const sym of shortStocks) {
-            //ns.print("INFO hack " + sym);
-            hackStockPort.write(getSymServer(sym));
-        }
     }
 }
 
@@ -147,45 +136,4 @@ export function getAllStocks(ns) {
         stocks.push(stock);
     }
     return stocks;
-}
-
-function getSymServer(sym) {
-    const symServer = {
-        "WDS": "",
-        "ECP": "ecorp",
-        "MGCP": "megacorp",
-        "BLD": "blade",
-        "CLRK": "clarkinc",
-        "OMTK": "omnitek",
-        "FSIG": "4sigma",
-        "KGI": "kuai-gong",
-        "DCOMM": "defcomm",
-        "VITA": "vitalife",
-        "ICRS": "icarus",
-        "UNV": "univ-energy",
-        "AERO": "aerocorp",
-        "SLRS": "solaris",
-        "GPH": "global-pharm",
-        "NVMD": "nova-med",
-        "LXO": "lexo-corp",
-        "RHOC": "rho-construction",
-        "APHE": "alpha-ent",
-        "SYSC": "syscore",
-        "CTK": "comptek",
-        "NTLK": "netlink",
-        "OMGA": "omega-net",
-        "JGN": "joesguns",
-        "SGC": "sigma-cosmetics",
-        "CTYS": "catalyst",
-        "MDYN": "microdyne",
-        "TITN": "titan-labs",
-        "FLCM": "fulcrumtech",
-        "STM": "stormtech",
-        "HLS": "helios",
-        "OMN": "omnia",
-        "FNS": "foodnstuff"
-    }
-
-    return symServer[sym];
-
 }
