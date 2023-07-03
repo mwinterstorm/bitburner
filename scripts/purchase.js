@@ -6,7 +6,7 @@ export async function main(ns) {
 	ns.moveTail(690, 495)
 	ns.resizeTail(750, 300)
 	const numberServers = ns.getPurchasedServerLimit()
-	let n = 3
+	let n = 2
 	const files = ["hack.js", "spawn.js"]
 	// INITIAL PURCHASE OF SERVERS
 	while (ns.getPurchasedServers().length < numberServers) {
