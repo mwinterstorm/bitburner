@@ -4,6 +4,7 @@
 const shortAvailable = false;
 
 const commission = 100000;
+var tradeActive = false;
 
 export async function main(ns) {
     ns.disableLog("ALL");
@@ -66,7 +67,7 @@ function tendStocks(ns) {
         if (stock.forecast > 0.55) {
             longStocks.add(stock.sym);
             //ns.print(`INFO ${stock.summary}`);
-            if (money > 1000 * commission) {
+            if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor(((money - commission)/2) / stock.askPrice));
                 if (ns.stock.buyStock(stock.sym, sharesToBuy) > 0) {
                     ns.print(`WARN ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4,1000,true)}`);
@@ -76,7 +77,7 @@ function tendStocks(ns) {
         else if (stock.forecast < 0.45 && shortAvailable) {
             shortStocks.add(stock.sym);
             //ns.print(`INFO ${stock.summary}`);
-            if (money > 1000 * commission) {
+            if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor(((money - commission)/2) / stock.bidPrice));
                 if (ns.stock.buyShort(stock.sym, sharesToBuy) > 0) {
                     ns.print(`WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
@@ -85,6 +86,11 @@ function tendStocks(ns) {
         }
     }
     ns.print("Stock value: " + ns.formatNumber(overallValue, 4, 1000, true));
+    if (overallValue < money) {
+        tradeActive = true
+    } else {
+        tradeActive = false
+    }
 
     // send stock market manipulation orders to hack manager
     var growStockPort = ns.getPortHandle(1); // port 1 is grow
