@@ -14,7 +14,7 @@ export async function main(ns) {
 		tendStocks(ns);
 		await ns.sleep(5 * 1000);
 	} 
-	ns.print("All Stocks Sold for $" + ns.formatNumber(TotalValue, 4, 1000, true) + "(Profit: $" + TotalProfit + ")")
+	ns.print("All Stocks Sold for $" + ns.formatNumber(TotalValue, 4, 1000, true) + "(Profit: $" + ns.formatNumber(TotalProfit, 4, 1000, true) + ")")
 }
 
 function tendStocks(ns) {
