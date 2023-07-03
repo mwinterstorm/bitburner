@@ -14,8 +14,8 @@ export async function main(ns) {
     ns.disableLog("ALL");
     ns.tail();
     await ns.sleep(100);
-	ns.moveTail(900, 0)
-	ns.resizeTail(330, 300)
+    ns.moveTail(900, 0)
+    ns.resizeTail(330, 300)
 
     while (true) {
         money = ns.getServerMoneyAvailable("home");
@@ -34,13 +34,27 @@ function tendStocks(ns) {
 
     var longStocks = new Set();
     var shortStocks = new Set();
+    var numberStocks = 0
+
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
 
     for (const stock of stocks) {
         if (stock.longShares > 0) {
             if (stock.forecast > 0.5) {
                 longStocks.add(stock.sym);
-                ns.print(`INFO ${stock.summary} LONG ${ns.formatNumber(stock.cost + stock.profit, 4,1000,true)} ${ns.formatNumber(100 * stock.profit / stock.cost, 4,1000,true)}%`);
+                // ns.print(`INFO ${stock.summary} LONG ${ns.formatNumber(stock.cost + stock.profit, 4, 1000, true)} ${ns.formatNumber(100 * stock.profit / stock.cost, 4, 1000, true)}%`);
                 overallValue += (stock.cost + stock.profit);
+                numberStocks += 1
             }
             else {
                 const salePrice = ns.stock.sellStock(stock.sym, stock.longShares);
@@ -49,14 +63,15 @@ function tendStocks(ns) {
                 const saleProfit = saleTotal - saleCost - 2 * commission;
                 stock.shares = 0;
                 shortStocks.add(stock.sym);
-                ns.print(`WARN ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4,1000,true)} profit`);
+                ns.print(formattedTime + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`);
             }
         }
         if (stock.shortShares > 0) {
             if (stock.forecast < 0.5) {
                 shortStocks.add(stock.sym);
-                ns.print(`INFO ${stock.summary} SHORT ${ns.formatNumber(stock.cost + stock.profit, 4,1000,true)} ${ns.formatNumber(100 * stock.profit / stock.cost, 4,1000,true)}%`);
+                // ns.print(`INFO ${stock.summary} SHORT ${ns.formatNumber(stock.cost + stock.profit, 4, 1000, true)} ${ns.formatNumber(100 * stock.profit / stock.cost, 4, 1000, true)}%`);
                 overallValue += (stock.cost + stock.profit);
+                numberStocks += 1
             }
             else {
                 const salePrice = ns.stock.sellShort(stock.sym, stock.shortShares);
@@ -65,7 +80,7 @@ function tendStocks(ns) {
                 const saleProfit = saleTotal - saleCost - 2 * commission;
                 stock.shares = 0;
                 longStocks.add(stock.sym);
-                ns.print(`WARN ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4,1000,true)} profit`);
+                ns.print(formattedTime + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`);
             }
         }
     }
@@ -78,9 +93,10 @@ function tendStocks(ns) {
             if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.askPrice));
                 if (ns.stock.buyStock(stock.sym, sharesToBuy) > 0) {
-                    ns.print(`WARN ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4,1000,true)}`);
+                    ns.print(formattedTime + ` - INFO ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
                     tradeMoney -= (sharesToBuy * stock.askPrice) + commission
                     overallValue += (sharesToBuy * stock.askPrice);
+                    numberStocks += 1
                 }
             }
         }
@@ -90,14 +106,17 @@ function tendStocks(ns) {
             if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.bidPrice));
                 if (ns.stock.buyShort(stock.sym, sharesToBuy) > 0) {
-                    ns.print(`WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
+                    ns.print(formattedTime + ` - WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
                     tradeMoney = tradeMoney - ((sharesToBuy * stock.bidPrice) + commission)
                     overallValue += (sharesToBuy * stock.bidPrice)
+                    numberStocks += 1
                 }
             }
         }
     }
-    ns.print("Stock value: " + ns.formatNumber(overallValue, 4, 1000, true));
+    if (Math.random() >= 0.82) {
+        ns.print(formattedTime + " - Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)");
+    }
     if (overallValue < money) {
         tradeActive = true
     } else {

@@ -17,7 +17,7 @@ My Bitburner Scripts
 1. sell.js: sells stocks that have made a profit
 1. share.js: used to gain faction reputation
 1. spawn.js: spawns hack.js or self.js with max threads
-1. trade.ks: runs stock market trades, needs full TIX API access
+1. trade.ks: runs stock market trades, needs full TIX API access. Purchases when stocks make up less than 50% of total of money + stocks. Can sell anytime.
 
 ## To do
 1. install.js:
