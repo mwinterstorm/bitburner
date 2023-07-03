@@ -1,19 +1,20 @@
 const commission = 100000;
 var stocksExist = true
 var TotalProfit = 0
+var TotalValue = 0
 var StockNumber = 0
 
 export async function main(ns) {
 	ns.disableLog("ALL");
 	ns.tail();
 	await ns.sleep(100);
-	ns.moveTail(900, 25)
-	ns.resizeTail(330, 300)
+	ns.moveTail(850, 30)
+	ns.resizeTail(380, 270)
 	while (stocksExist == true) {
 		tendStocks(ns);
 		await ns.sleep(5 * 1000);
 	} 
-	ns.print("All Stocks Sold for $" + ns.formatNumber(TotalProfit, 4, 1000, true))
+	ns.print("All Stocks Sold for $" + ns.formatNumber(TotalValue, 4, 1000, true) + "(Profit: $" + TotalProfit + ")")
 }
 
 function tendStocks(ns) {
@@ -30,6 +31,7 @@ function tendStocks(ns) {
 			stock.shares = 0;
 			ns.print(`SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`);
 			TotalProfit += saleProfit
+			TotalValue += (saleCost + saleProfit)
 			--StockNumber
 		} else if (stock.longShares >= 1) {
 			const saleProfit = ((stock.bidPrice - stock.longPrice) * stock.longShares) - (2 * commission);
