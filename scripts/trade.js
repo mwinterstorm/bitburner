@@ -5,14 +5,18 @@ const shortAvailable = false;
 
 const commission = 100000;
 var tradeActive = false;
+var tradeMoney = 0
+var money = 0
 
 export async function main(ns) {
     ns.disableLog("ALL");
     ns.tail();
 
     while (true) {
+        money = ns.getServerMoneyAvailable("home");
+        tradeMoney = money / 2
         tendStocks(ns);
-        await ns.sleep(5 * 1000);
+        await ns.sleep(6 * 1000);
     }
 }
 
@@ -62,15 +66,15 @@ function tendStocks(ns) {
     }
 
     for (const stock of stocks) {
-        var money = ns.getServerMoneyAvailable("home");
         //ns.print(`INFO ${stock.summary}`);
         if (stock.forecast > 0.55) {
             longStocks.add(stock.sym);
             //ns.print(`INFO ${stock.summary}`);
             if (tradeActive == true) {
-                const sharesToBuy = Math.min(stock.maxShares, Math.floor(((money - commission)/2) / stock.askPrice));
+                const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.askPrice));
                 if (ns.stock.buyStock(stock.sym, sharesToBuy) > 0) {
                     ns.print(`WARN ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4,1000,true)}`);
+                    tradeMoney = tradeMoney - (sharesToBuy * stock.askPrice)
                 }
             }
         }
@@ -78,9 +82,10 @@ function tendStocks(ns) {
             shortStocks.add(stock.sym);
             //ns.print(`INFO ${stock.summary}`);
             if (tradeActive == true) {
-                const sharesToBuy = Math.min(stock.maxShares, Math.floor(((money - commission)/2) / stock.bidPrice));
+                const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.bidPrice));
                 if (ns.stock.buyShort(stock.sym, sharesToBuy) > 0) {
                     ns.print(`WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
+                    tradeMoney = tradeMoney - (sharesToBuy * stock.bidPrice)
                 }
             }
         }
