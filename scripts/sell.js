@@ -41,7 +41,10 @@ function tendStocks(ns) {
 			++StockNumber
 		}
 	}
-    ns.print("SELLING: Value remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
+    ns.print("SELLING: Remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
+	ns.print("SELLING: Value sold = $" + ns.formatNumber(TotalValue, 4, 1000, true))
+	ns.print("SELLING: Profit = $" + ns.formatNumber(TotalProfit, 4, 1000, true))
+
 	if (StockNumber == 0) {
 		stocksExist = false
 	}

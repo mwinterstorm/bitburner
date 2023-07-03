@@ -2,9 +2,9 @@
 export async function main(ns) {
     ns.disableLog("ALL")
     ns.tail()
-		await ns.sleep(100)
-		ns.moveTail(0,0)
-		ns.resizeTail(900,300)
+    await ns.sleep(100)
+    ns.moveTail(0, 0)
+    ns.resizeTail(850, 300)
     var time = 500
     while (true) {
         let report = ns.readPort(8);
