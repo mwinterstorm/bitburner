@@ -81,8 +81,9 @@ export async function main(ns) {
 			}
 		}
 		time = getTime();
-		ns.print(time + " - ...complete, waiting...")
-		await ns.sleep(1000000)
+        let waitPause = Math.random() * 120000
+        ns.print("... complete, waiting: " + Math.floor(waitPause / 1000) + " seconds")
+        await ns.sleep(waitPause)
 	}
 }
 

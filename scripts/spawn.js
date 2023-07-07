@@ -7,7 +7,7 @@ export async function main(ns) {
 	let usedram = ns.getServerUsedRam(server);
 	let freeram = maxram - usedram;
 	if (server == "home") {
-		freeram = freeram - 4.7
+		freeram = freeram - 32
 	} 
 	let threads = Math.floor((freeram) / ns.getScriptRam("hack.js"))
 	if (threads >= 1) {
