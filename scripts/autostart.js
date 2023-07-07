@@ -37,6 +37,11 @@ export async function main(ns) {
     await ns.run("trade.js");
     await ns.sleep(500)
 
+    // start rungang.js
+    await ns.tprint("Starting rungang.js")
+    await ns.run("gangs/rungang.js");
+    await ns.sleep(500)
+
     // start spawn.js and therefore hack.js
     await ns.tprint("Starting hack.js on home server via spawn.js...")
     await ns.tprint("...exiting")
