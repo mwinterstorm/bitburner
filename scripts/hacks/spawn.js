@@ -9,10 +9,10 @@ export async function main(ns) {
 	if (server == "home") {
 		freeram = freeram - 32
 	} 
-	let threads = Math.floor((freeram) / ns.getScriptRam("share.js"))
+	let threads = Math.floor((freeram) / ns.getScriptRam("hacks/hack.js"))
 	if (threads >= 1) {
-		await ns.tprint("Starting share.js with " + threads + " threads on " + server)
-		await ns.spawn("share.js", threads, threads, server)
+		await ns.tprint("Starting hack.js with " + threads + " threads on " + server)
+		await ns.spawn("hacks/hack.js", threads, threads, server)
 	} else {
 		await ns.tprint("Not enough RAM")
 	}

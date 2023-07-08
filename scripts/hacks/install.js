@@ -1,14 +1,14 @@
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.disableLog("ALL")
-	ns.tail()
-	await ns.sleep(100);
-	ns.moveTail(85, 495)
-	ns.resizeTail(600, 300)
+	// ns.tail()
+	// await ns.sleep(100);
+	// ns.moveTail(85, 495)
+	// ns.resizeTail(600, 300)
 	while (true) {
 		let time = getTime();
 		ns.print(time + " - Running install...")
-		const files = ["self.js"]
+		const files = ["hacks/self.js"]
 		const servers = ns.scan()
 		const hacklev = ns.getHackingLevel()
 		var checkHacks = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.exe", "SQLInject.exe"]
@@ -24,11 +24,11 @@ export async function main(ns) {
 				ns.scp(files, servers[i])
 				let hackreq = ns.getServerRequiredHackingLevel(servers[i])
 				if (ns.hasRootAccess(servers[i]) == true) {
-					if (!ns.isRunning("self.js", servers[i], servers[i])) {
+					if (!ns.isRunning("hacks/self.js", servers[i], servers[i])) {
 						if (hackreq <= hacklev) {
-							let threads = Math.floor(ns.getServerMaxRam(servers[i]) / ns.getScriptRam("self.js"))
+							let threads = Math.floor(ns.getServerMaxRam(servers[i]) / ns.getScriptRam("hacks/self.js"))
 							if (threads >= 1) {
-								await ns.exec("self.js", servers[i], threads, servers[i])
+								await ns.exec("hacks/self.js", servers[i], threads, servers[i])
 								let time = getTime();
 								ns.print(time + " - SUCCESS Running self.js with " + threads + " threads on " + servers[i])
 								await ns.sleep(500)
@@ -61,7 +61,7 @@ export async function main(ns) {
 						await ns.sleep(500)
 						let threads = Math.floor(ns.getServerMaxRam(servers[i]) / 2.45)
 						if (threads >= 1) {
-							await ns.exec("self.js", servers[i], threads, servers[i])
+							await ns.exec("hacks/self.js", servers[i], threads, servers[i])
 							let time = getTime();
 							ns.print(time + " - SUCCESS Running self.js with " + threads + " threads on " + servers[i])
 							await ns.sleep(500)

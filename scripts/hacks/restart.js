@@ -2,7 +2,7 @@
 export async function main(ns) {
 	ns.disableLog("ALL")
 	// ns.tail()
-	const files = ["spawn.js", "hack.js"]
+	const files = ["hacks/spawn.js", "hacks/hack.js"]
 	const servers = ns.scan()
 	servers.push("home")
 	await ns.sleep(1500)
@@ -10,12 +10,12 @@ export async function main(ns) {
 		if (servers[i].includes("markwr") == true) {
 			await ns.killall(servers[i])
 			ns.scp(files, servers[i])
-			await ns.exec("spawn.js", servers[i])
+			await ns.exec("hacks/spawn.js", servers[i])
 			await ns.sleep(1500)
 		}
 		if (servers[i].includes("home") == true) {
 			await ns.scriptKill("share.js", servers[i])
-			await ns.exec("spawn.js", servers[i])
+			await ns.exec("hacks/spawn.js", servers[i])
 			await ns.sleep(1500)
 		}
 	}

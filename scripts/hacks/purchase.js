@@ -7,7 +7,7 @@ export async function main(ns) {
 	ns.resizeTail(750, 300)
 	const numberServers = ns.getPurchasedServerLimit()
 	let n = 3
-	const files = ["hack.js", "spawn.js"]
+	const files = ["hacks/hack.js", "hacks/spawn.js"]
 	// INITIAL PURCHASE OF SERVERS
 	while (ns.getPurchasedServers().length < numberServers) {
 		let ram = 2 ** n;
@@ -17,7 +17,7 @@ export async function main(ns) {
 			if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)) {
 				let hostname = ns.purchaseServer("markwr-" + i, ram);
 				ns.scp(files, hostname);
-				await ns.exec("spawn.js", hostname);
+				await ns.exec("hacks/spawn.js", hostname);
 				await ns.print("SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM") 
 				++i;
 				await ns.sleep(1001);
@@ -47,7 +47,7 @@ export async function main(ns) {
 						await ns.print("SUCCESS Upgraded " + hostname + " to " + ram + "GB RAM")
 						await ns.scriptKill("hack.js", hostname)
 						await ns.scp(files, hostname);
-						ns.exec("spawn.js", hostname);
+						ns.exec("hacks/spawn.js", hostname);
 						await ns.sleep(1003)
 					}
 				} else {
