@@ -5,7 +5,7 @@ export async function main(ns) {
     while (true) {
         var servers = ns.scan()
         for (let i = 0; i < servers.length; i++) {
-            if (ns.scriptRunning("self.js", servers[i])) {
+            if (ns.scriptRunning("hacks/self.js", servers[i])) {
                 if (ns.getServerMaxMoney(servers[i]) != 0) {
                     const reqlev = ns.getServerRequiredHackingLevel(servers[i])
                     const hacklev = ns.getHackingLevel()
@@ -16,7 +16,6 @@ export async function main(ns) {
                             while (!ns.tryWritePort(7, servers[i])) {
                                 await ns.sleep(500)
                             }
-                            // ns.tryWritePort(7, servers[i])
                             ns.print("SUCCESS hack.js add: " + servers[i])
                         } else {
                             if (Math.random() < 0.1) {

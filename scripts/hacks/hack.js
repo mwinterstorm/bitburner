@@ -42,7 +42,7 @@ export async function main(ns) {
 			let weaklog2 = seclev - weaklog
 			let report = "INFO Weakened " + target + " from " + host + ": " + seclev.toFixed(2) + " - " + weaklog.toFixed(2) + " = " + weaklog2.toFixed(2) + " (" + securityThresh.toFixed(2) + ")";
 			await ns.print(report)
-			await ns.tryWritePort(8, report)
+			// await ns.tryWritePort(8, report)
 			// compare random to percentage of max money 
 		} else if (targ > thres) {
 			// more likely to grow when percentage of max money is low
@@ -55,7 +55,7 @@ export async function main(ns) {
 			let monlog4 = ns.formatNumber(monlog, 4, 1000, true)
 			let report = "WARN Grown " + target + " from " + host + ": " + ns.formatPercent(growlog - 1, 4) + " (" + monlog4 + " / " + maxmon1 + ")"
 			await ns.print(report)
-			await ns.tryWritePort(8, report)
+			// await ns.tryWritePort(8, report)
 		} else {
 			// more likely to hack if percentage of max money is high
 			let hacktime = ns.getHackTime(target);

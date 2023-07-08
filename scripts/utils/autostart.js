@@ -3,9 +3,6 @@ export async function main(ns) {
     ns.disableLog("ALL")
     // ns.tail()
 
-    // GET INFO
-    var info = ns.getPlayer();
-
     // HACKING & CRAWLING
     await ns.tprint("Starting CENTRAL HACK CO-ORDINATOR...")
     await ns.run("hacks/coordinate.js");
@@ -27,9 +24,9 @@ export async function main(ns) {
 
     // STOCK MARKET
     let tradeAPI = 0
-    if (info.hasTixApiAccess && info.hasWseAccount) { 
+    if (ns.stock.hasWSEAccount() && ns.stock.hasTIXAPIAccess()) {
         tradeAPI = 1
-        if (info.has4SDataTixApi && info.has4SData) {
+        if (ns.stock.has4SData() && ns.stock.has4SDataTIXAPI()) {
             tradeAPI = 2
         }
     }

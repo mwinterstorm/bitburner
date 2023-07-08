@@ -18,7 +18,9 @@ export async function main(ns) {
 				let hostname = ns.purchaseServer("markwr-" + i, ram);
 				ns.scp(files, hostname);
 				await ns.exec("hacks/spawn.js", hostname);
-				await ns.print("SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM") 
+				let report = "SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM"
+				await ns.print(report)
+				await ns.tryWritePort(8, report) 
 				++i;
 				await ns.sleep(1001);
 			}
@@ -44,14 +46,18 @@ export async function main(ns) {
 					await ns.print("INFO $" + cost1 + " ($" + (cost2) + ") to upgrade " + hostname + " to " + ram + "GB ram.")
 					if (ns.getServerMoneyAvailable("home") > (2 * ns.getPurchasedServerUpgradeCost(hostname, ram))) {
 						await ns.upgradePurchasedServer(hostname, ram)
-						await ns.print("SUCCESS Upgraded " + hostname + " to " + ram + "GB RAM")
+						let report = "SUCCESS Upgraded " + hostname + " to " + ram + "GB RAM"
+						await ns.print(report)
+						await ns.tryWritePort(8, report)
 						await ns.scriptKill("hack.js", hostname)
 						await ns.scp(files, hostname);
 						ns.exec("hacks/spawn.js", hostname);
 						await ns.sleep(1003)
 					}
 				} else {
-					await ns.print("WARN " + hostname + " is fully upgraded")
+					let report = "WARN " + hostname + " is fully upgraded"
+					await ns.print(report)
+					await ns.tryWritePort(8, report)
 					if (maxed.includes(hostname) != true) {
 						maxed.push(hostname)
 					}
@@ -62,5 +68,9 @@ export async function main(ns) {
 		}
 	}
 	await ns.sleep(1005)
-	await ns.print("SUCCESS All servers fully upgraded")
+	let report = "SUCCESS All servers fully upgraded"
+	await ns.print(report)
+	await ns.tprint(report)
+	await ns.tryWritePort(8, report)
+
 }
