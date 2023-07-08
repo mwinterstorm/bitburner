@@ -1,7 +1,12 @@
 # bitburner
 My Bitburner Scripts
 
+1. copy and paste everything in aliases.md into terminal and run
+1. 'autostart' then starts everything automatically.
+1. other commands are in aliases.md
+
 ## List of scripts
+### TO UPDATE THIS LIST
 1. autostart.js: starts coordinate.js, purchase.ks, report.js, install.js, restart.js, trade.js, spawn.js
 1. coordinate.js: populates port with servers for hack.js and self.js to hack - weighted towards optimatal hacking level
 1. earlyTrade.js: runs Stock Market trades pre getting full TIX API access
@@ -20,6 +25,5 @@ My Bitburner Scripts
 1. trade.ks: runs stock market trades, needs full TIX API access. Purchases when stocks make up less than 50% of total of money + stocks. Can sell anytime.
 
 ## To do
-1. install.js:
-    1. get auto re running periodically
+
 
