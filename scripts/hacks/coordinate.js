@@ -2,7 +2,7 @@
 export async function main(ns) {
     ns.disableLog("ALL")
     // ns.tail()
-    const defaultTarget = "nwo"
+    const defaultTarget = ["nwo", "megacorp", "vitalife"]
     while (true) {
         var servers = ns.scan()
         for (let i = 0; i < servers.length; i++) {
@@ -27,8 +27,9 @@ export async function main(ns) {
                                     await ns.sleep(100)
                                 }
                             } else {
-                                ns.print("Skipped: " + servers[i] + " defaulting to " + defaultTarget)
-                                ns.tryWritePort(6, defaultTarget)
+                                let targetSelect = Math.floor(Math.random() * defaultTarget.length);
+                                ns.print("Skipped: " + servers[i] + " defaulting to " + defaultTarget[targetSelect])
+                                ns.tryWritePort(6, defaultTarget[targetSelect])
                             }
                         }
                     } else {
