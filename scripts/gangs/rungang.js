@@ -72,7 +72,7 @@ async function tendCats(ns) {
             ns.print(time + " - " + cats[catSelect] + " is doing " + crimes[crimeSelect].name);
         }
 
-        if (ascendTimer <= 1800) {
+        if (ascendTimer <= (cats.length * 60)) {
             ascendTimer = ascendTimer + (Math.floor(Math.random() * cats.length))
         } else {
             ascendTimer = 0
