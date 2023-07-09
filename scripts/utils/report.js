@@ -5,7 +5,7 @@ export async function main(ns) {
     await ns.sleep(100)
     ns.moveTail(0, 0)
     ns.resizeTail(850, 300)
-    var time = 500
+    var time = 100
     while (true) {
         let report = ns.readPort(8);
         // get time
@@ -27,10 +27,10 @@ export async function main(ns) {
             await ns.print(formattedTime + " - " + report)
         }
         await ns.sleep(time)
-        if (time < 900) {
+        if (time < 400) {
             time = time + 1
         } else {
-            time = 500
+            time = 100
         }
     }
 }

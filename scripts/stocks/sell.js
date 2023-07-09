@@ -11,6 +11,7 @@ export async function main(ns) {
 	ns.moveTail(850, 30)
 	ns.resizeTail(380, 270)
 	while (stocksExist == true) {
+		await ns.scriptKill("stocks/trade.js", "home")
 		StockNumber = 0
 		tendStocks(ns);
 		await ns.sleep(5 * 1000);

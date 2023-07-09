@@ -82,10 +82,10 @@ async function tendCats(ns) {
             }
         } else {
             ascendTimer = 0
-            let catSelect = Math.floor(Math.random() * cat.length);
-            ns.gang.ascendMember(cat[catSelect])
+            let catSelect = Math.floor(Math.random() * cats.length);
+            ns.gang.ascendMember(cats[catSelect])
             let time = getTime();
-            let report = time + " - SUCCESS Ascended " + cat[catSelect]
+            let report = time + " - SUCCESS Ascended " + cats[catSelect]
             ns.print(report)
             ns.tprint(report)
             await ns.tryWritePort(8, report)

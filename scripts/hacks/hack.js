@@ -7,11 +7,16 @@ export async function main(ns) {
 	while (true) {
 		let target = ns.readPort(7);
 		while (target == "NULL PORT DATA") {
-			let error = "FAIL Empty Coordination Data (retrying in 5s): " + host + " " + target;
-			await ns.print(error)
+			// let error = "FAIL Empty Coordination Data (retrying in 5s): " + host + " " + target;
+			// await ns.tryWritePort(8, error)
+			// await ns.print(error)
+			// await ns.sleep(5000)
+			// target = ns.readPort(7);
+			target = ns.readPort(6);
+			let error = "FAIL Empty Coordination Data on " + host + " defaulting to " + target;
 			await ns.tryWritePort(8, error)
-			await ns.sleep(5000)
-			target = ns.readPort(7);
+			await ns.print(error)
+			await ns.sleep(500)
 		}
 		await ns.print("Target: " + target + " from " + host + "(" + threads + " threads)")
 		let minsec = ns.getServerMinSecurityLevel(target);

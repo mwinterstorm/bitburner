@@ -6,8 +6,8 @@ My Bitburner Scripts
 1. other commands are in aliases.md
 
 # List of scripts
-## Utilities
-### Autostart
+## **Utilities**
+### AUTOSTART
 - utils/autostart.js: 
 - starts other scripts (as noted below)
 - if script requires API access (e.g. stock scripts), checks for access prior to starting
@@ -18,8 +18,9 @@ My Bitburner Scripts
 - can run with command *markscan* (after setting aliases)
 ### REPORT
 - utils/report.js
+- started by AUTOSTARTY
 - centralised reporting window
-- other scripts provide data to report here
+- other scripts provide data to report here 
 
 ## Hacks - to update
 1. share.js: used to gain faction reputation

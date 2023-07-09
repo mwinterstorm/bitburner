@@ -19,7 +19,7 @@ export async function main(ns) {
     await ns.tprint("Starting HACK CRAWL...")
     await ns.run("hacks/install.js");
     await ns.sleep(500)
-    await ns.tprint("... waiting to crawl servers")
+    await ns.tprint("...waiting to crawl servers")
     await ns.sleep(5000)
 
     // STOCK MARKET
@@ -42,7 +42,7 @@ export async function main(ns) {
     await ns.sleep(500)
 
     // GANGS
-    await ns.tprint("Starting GANGS")
+    await ns.tprint("Starting GANGS...")
     await ns.run("gangs/establishgang.js");
     await ns.sleep(10000)
 
@@ -50,7 +50,7 @@ export async function main(ns) {
     await ns.tprint("Restarting HACKING on DATACENTRE and HOME...")
     await ns.run("hacks/restart.js");
     await ns.sleep(500)
-    await ns.tprint("... waiting to crawl DATACENTRE")
+    await ns.tprint("...waiting to crawl DATACENTRE")
     await ns.sleep(5000)
     await ns.tprint("...exiting")
 }
