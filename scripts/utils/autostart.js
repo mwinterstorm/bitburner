@@ -13,7 +13,7 @@ export async function main(ns) {
     await ns.sleep(500)
 
     await ns.tprint("Starting REPORT...")
-    await ns.run("hacks/report.js");
+    await ns.run("utils/report.js");
     await ns.sleep(500)
 
     await ns.tprint("Starting HACK CRAWL...")

@@ -13,7 +13,6 @@ export async function main(ns) {
 			await ns.exec("hacks/rep.js", servers[i])
 			await ns.sleep(1500)
 		} else if (servers[i] == "home") {
-			ns.print("works?")
 			await ns.scriptKill("hacks/hack.js", servers[i])
 			await ns.exec("hacks/rep.js", servers[i])
 			await ns.sleep(1500)

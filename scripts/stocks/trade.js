@@ -12,7 +12,7 @@ var overallValue = 0;
 
 export async function main(ns) {
     ns.disableLog("ALL");
-    ns.tail();
+    // ns.tail();
     await ns.sleep(100);
     ns.moveTail(850, 0)
     ns.resizeTail(380, 300)
@@ -63,7 +63,9 @@ function tendStocks(ns) {
                 const saleProfit = saleTotal - saleCost - 2 * commission;
                 stock.shares = 0;
                 shortStocks.add(stock.sym);
-                ns.print(formattedTime + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`);
+                let report = formattedTime + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
+                ns.print(report)
+                ns.tryWritePort(8, report)
             }
         }
         if (stock.shortShares > 0) {
@@ -80,7 +82,9 @@ function tendStocks(ns) {
                 const saleProfit = saleTotal - saleCost - 2 * commission;
                 stock.shares = 0;
                 longStocks.add(stock.sym);
-                ns.print(formattedTime + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`);
+                let report = formattedTime + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
+                ns.print(report)
+                ns.tryWritePort(8, report)
             }
         }
     }
@@ -93,12 +97,14 @@ function tendStocks(ns) {
             if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.askPrice));
                 if (ns.stock.buyStock(stock.sym, sharesToBuy) > 0) {
-                    ns.print(formattedTime + ` - INFO ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
-                    tradeMoney -= (sharesToBuy * stock.askPrice) + commission
+                    let report = formattedTime + ` - INFO ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
+                    ns.print(report);
+                    ns.tryWritePort(8, report);    
+                    tradeMoney -= (sharesToBuy * stock.askPrice) + commission;
                     overallValue += (sharesToBuy * stock.askPrice);
-                    numberStocks += 1
-                }
-            }
+                    numberStocks += 1;
+                };
+            };
         }
         else if (stock.forecast < 0.45 && shortAvailable) {
             shortStocks.add(stock.sym);
@@ -106,7 +112,9 @@ function tendStocks(ns) {
             if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.bidPrice));
                 if (ns.stock.buyShort(stock.sym, sharesToBuy) > 0) {
-                    ns.print(formattedTime + ` - WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`);
+                    let report = formattedTime + ` - WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
+                    ns.print(report);
+                    ns.tryWritePort(8, report);    
                     tradeMoney = tradeMoney - ((sharesToBuy * stock.bidPrice) + commission)
                     overallValue += (sharesToBuy * stock.bidPrice)
                     numberStocks += 1
@@ -115,14 +123,16 @@ function tendStocks(ns) {
         }
     }
     if (Math.random() >= 0.82) {
-        ns.print(formattedTime + " - Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)");
-    }
+        let report = formattedTime + " - Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)";
+        ns.print(report);
+        ns.tryWritePort(8, report);
+    };
     if (overallValue < money) {
-        tradeActive = true
+        tradeActive = true;
     } else {
-        tradeActive = false
-    }
-}
+        tradeActive = false;
+    };
+};
 
 export function getAllStocks(ns) {
     // make a lookup table of all stocks and all their properties

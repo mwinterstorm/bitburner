@@ -74,6 +74,12 @@ async function tendCats(ns) {
 
         if (ascendTimer <= (cats.length * 60)) {
             ascendTimer = ascendTimer + (Math.floor(Math.random() * cats.length))
+            let time = getTime();
+            if (Math.random() >= 0.41) {
+                let report = time + " Ascension: " + ns.formatNumber((ascendTimer / 1800)*100, 4, 100, true) + "% to ascension";
+                ns.print(report)
+                await ns.tryWritePort(8, report)
+            }
         } else {
             ascendTimer = 0
             let catSelect = Math.floor(Math.random() * cat.length);

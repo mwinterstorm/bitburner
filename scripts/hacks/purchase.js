@@ -1,10 +1,10 @@
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.disableLog("ALL");
-	ns.tail();
-	await ns.sleep(100);
-	ns.moveTail(690, 495)
-	ns.resizeTail(750, 300)
+	// ns.tail();
+	// await ns.sleep(100);
+	// ns.moveTail(690, 495)
+	// ns.resizeTail(750, 300)
 	const numberServers = ns.getPurchasedServerLimit()
 	let n = 3
 	const files = ["hacks/hack.js", "hacks/spawn.js"]
@@ -49,7 +49,7 @@ export async function main(ns) {
 						let report = "SUCCESS Upgraded " + hostname + " to " + ram + "GB RAM"
 						await ns.print(report)
 						await ns.tryWritePort(8, report)
-						await ns.scriptKill("hack.js", hostname)
+						await ns.scriptKill("hacks/hack.js", hostname)
 						await ns.scp(files, hostname);
 						ns.exec("hacks/spawn.js", hostname);
 						await ns.sleep(1003)

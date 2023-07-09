@@ -1,4 +1,5 @@
 export async function main(ns) {
+    ns.disableLog("ALL");
     while (true) {
         await establishGang(ns)
         await tendCats(ns);
@@ -50,7 +51,10 @@ async function establishGang(ns) {
             if (!catMembers.includes(cats[cat])) {
                 if (ns.gang.recruitMember(cats[cat])) {
                     let time = getTime();
-                    ns.print(time + " - Recruited " + cats[cat]);
+                    let report = time + " - Recruited " + cats[cat]
+                    ns.print(report);
+                    ns.tprint(report);
+                    await ns.tryWritePort(8, report);
                     let taskNames = ns.gang.getTaskNames();
                     let tasks = [];
                     for (let i = 0; i < taskNames.length; i++) {

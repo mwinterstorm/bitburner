@@ -9,7 +9,7 @@ export async function main(ns) {
 	if (server == "home") {
 		freeram = freeram - 32
 	} 
-	let threads = Math.floor((freeram) / ns.getScriptRam("share.js"))
+	let threads = Math.floor((freeram) / ns.getScriptRam("hacks/share.js"))
 	if (threads >= 1) {
 		let report = "Starting share.js with " + threads + " threads on " + server
 		await ns.print(report)

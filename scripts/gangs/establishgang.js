@@ -3,6 +3,8 @@ export async function main(ns) {
     ns.disableLog("ALL");
     // ns.tail();
 
+    const maxMembers = 12;
+
     // if not in gang wait until can join
     if (!ns.gang.inGang()) {
         while (!ns.gang.inGang()) {
@@ -19,8 +21,10 @@ export async function main(ns) {
             isHacking = "criminal";
         };
         let time = getTime();
-        ns.tprint(time + " - Created " + isHacking + " gang with: " + gangInfo.faction);
-        let maxMembers = 12;
+        let report = time + " - Created " + isHacking + " gang with: " + gangInfo.faction;
+        ns.tprint(report);
+        ns.print(report);
+        await ns.tryWritePort(8, report)
         var catMembers = ns.gang.getMemberNames();
         if (catMembers.length < maxMembers) {
             ns.spawn("/gangs/growgang.js", 1);
@@ -36,7 +40,10 @@ export async function main(ns) {
             isHacking = "criminal";
         };
         let time = getTime();
-        ns.tprint(time + " - You have a " + isHacking + " gang with: " + gangInfo.faction);
+        let report = time + " - You have a " + isHacking + " gang with: " + gangInfo.faction;
+        ns.tprint(report);
+        ns.print(report);
+        await ns.tryWritePort(8, report)
         let maxMembers = 12;
         var catMembers = ns.gang.getMemberNames();
         if (catMembers.length < maxMembers) {
