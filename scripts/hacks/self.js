@@ -64,12 +64,31 @@ export async function main(ns) {
             let monlog2 = moneyAvailable - hacklog;
             let hacklog1 = ns.formatNumber(hacklog,4,1000,true)
             let monlog3 = ns.formatNumber(monlog2,4,1000,true)
-            let report = "SUCCESS Hacked " + target + " from " + host + ": " + hacklog1 + " (" + monlog3 + " / " + maxmon1 + ")"
+            let time = getTime()
+            let report = "SUCCESS " + time + " - Hacked " + target + " from " + host + ": " + hacklog1 + " (" + monlog3 + " / " + maxmon1 + ")"
             await ns.print(report)
             if (hacklog > 0) {
-                await ns.tryWritePort(8, report)
+                if (Math.random() >= 0.66) {
+                    await ns.tryWritePort(8, report)
+                }
+
             }
 
         }
     }
+}
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
 }

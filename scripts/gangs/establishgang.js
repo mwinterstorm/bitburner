@@ -10,8 +10,10 @@ export async function main(ns) {
         while (!ns.gang.inGang()) {
             let factions = ns.getPlayer().factions;
             let factionSelect = Math.floor(Math.random() * factions.length);
-            ns.gang.createGang(factions[factionSelect]);
-            await ns.sleep(5000);
+            if (factions.length > 0) {
+                ns.gang.createGang(factions[factionSelect]);
+            }
+            await ns.sleep(1200000);
         };
         var gangInfo = ns.gang.getGangInformation();
         let isHacking = "unknown";

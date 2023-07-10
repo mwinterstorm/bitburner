@@ -16,7 +16,7 @@ export async function main(ns) {
 			let error = "FAIL Empty Coordination Data on " + host + " defaulting to " + target;
 			await ns.tryWritePort(8, error)
 			await ns.print(error)
-			await ns.sleep(500)
+			await ns.sleep(5000)
 		}
 		await ns.print("Target: " + target + " from " + host + "(" + threads + " threads)")
 		let minsec = ns.getServerMinSecurityLevel(target);

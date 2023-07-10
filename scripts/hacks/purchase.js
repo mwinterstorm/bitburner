@@ -22,9 +22,9 @@ export async function main(ns) {
 				await ns.print(report)
 				await ns.tryWritePort(8, report) 
 				++i;
-				await ns.sleep(1001);
+				await ns.sleep(60001);
 			}
-			await ns.sleep(1002);
+			await ns.sleep(60002);
 		}
 		await ns.sleep(1002);
 	}

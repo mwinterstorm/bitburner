@@ -2,7 +2,7 @@
 export async function main(ns) {
     ns.disableLog("ALL")
     // ns.tail()
-    const defaultTarget = ["nwo", "megacorp", "vitalife"]
+    const defaultTarget = ["nwo", "megacorp", "blade", "omnitek"]
     while (true) {
         var servers = ns.scan()
         for (let i = 0; i < servers.length; i++) {
@@ -28,8 +28,12 @@ export async function main(ns) {
                                 }
                             } else {
                                 let targetSelect = Math.floor(Math.random() * defaultTarget.length);
-                                ns.print("Skipped: " + servers[i] + " defaulting to " + defaultTarget[targetSelect])
-                                ns.tryWritePort(6, defaultTarget[targetSelect])
+                                if (ns.scriptRunning("hacks/self.js", defaultTarget[targetSelect])) {
+                                    ns.print("Skipped: " + servers[i] + " defaulting to " + defaultTarget[targetSelect])
+                                    ns.tryWritePort(6, defaultTarget[targetSelect])
+                                } else {
+                                    ns.print("Skipped: " + servers[i])
+                                }
                             }
                         }
                     } else {
