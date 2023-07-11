@@ -22,9 +22,13 @@ export async function main(ns) {
 				await ns.print(report)
 				await ns.tryWritePort(8, report) 
 				++i;
-				await ns.sleep(60001);
+				await ns.sleep(10001);
 			}
-			await ns.sleep(60002);
+			if (ns.getServerMoneyAvailable("home") < 325000000) {
+				await ns.sleep(60002);
+			} else {
+				await ns.sleep(1000)
+			}
 		}
 		await ns.sleep(1002);
 	}
