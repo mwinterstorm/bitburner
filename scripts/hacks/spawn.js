@@ -27,14 +27,14 @@ export async function main(ns) {
 				let report = "Starting hack.js with " + threads + " threads on " + server
 				await ns.print(report)
 				await ns.tryWritePort(8, report)
-				await ns.run(hack, threads, threads, server + ":" + counter);
+				await ns.run(hack, threads, threads, server + "." + counter);
 				freeram = freeram - (threads * hackRAM);
 				counter++
 			} else {
 				let report = "Starting hack.js with " + threads + " threads on " + server
 				await ns.print(report)
 				await ns.tryWritePort(8, report)
-				await ns.spawn(hack, threads, threads, server + ":" + counter)
+				await ns.spawn(hack, threads, threads, server + "." + counter)
 				freeram = freeram - (threads * hackRAM)
 				counter++
 			};
