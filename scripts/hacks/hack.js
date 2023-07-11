@@ -2,21 +2,30 @@
 export async function main(ns) {
 	ns.disableLog("ALL")
 	// ns.tail()
-	const host = ns.getHostname()
-	const threads = ns.args[0]
+	const threads = ns.args[0];
+	const host = ns.args[1] + "(" + threads + ")";
+	let defaultTargets = [];
 	while (true) {
 		let target = ns.readPort(7);
 		while (target == "NULL PORT DATA") {
-			// let error = "FAIL Empty Coordination Data (retrying in 5s): " + host + " " + target;
-			// await ns.tryWritePort(8, error)
-			// await ns.print(error)
-			// await ns.sleep(5000)
-			// target = ns.readPort(7);
-			target = ns.readPort(6);
-			let error = "FAIL Empty Coordination Data on " + host + " defaulting to " + target;
-			await ns.tryWritePort(8, error)
-			await ns.print(error)
-			await ns.sleep(5000)
+			if (defaultTargets.length == 0) {
+				let error = "FAIL Empty Coordination Data (retrying in 5s): " + host;
+				await ns.tryWritePort(8, error)
+				await ns.print(error)
+				await ns.sleep(5000)
+				target = ns.readPort(7);
+			} else {
+				let index = Math.floor(Math.random() * defaultTargets.length)
+				target = defaultTargets[index]
+				let error = "WARN Empty Coordination Data: " + host + " defaulting to " + target;
+				await ns.tryWritePort(8, error)
+				await ns.print(error)
+			}
+		}
+		if (target != "NULL PORT DATA") {
+			if (!defaultTargets.includes(target)) {
+				defaultTargets.push(target)
+			} 
 		}
 		await ns.print("Target: " + target + " from " + host + "(" + threads + " threads)")
 		let minsec = ns.getServerMinSecurityLevel(target);

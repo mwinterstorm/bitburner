@@ -18,6 +18,7 @@ export async function main(ns) {
 	if (server == "home") {
 		freeram = freeram - reserveRAM;
 	};
+	let counter = 0; //Counter for instances on server
 	while (freeram >= hackRAM) {
 		let threads = Math.floor((freeram) / ns.getScriptRam(hack));
 		if (threads >= 1) {
@@ -26,14 +27,16 @@ export async function main(ns) {
 				let report = "Starting hack.js with " + threads + " threads on " + server
 				await ns.print(report)
 				await ns.tryWritePort(8, report)
-				await ns.run(hack, threads, threads, server);
-				freeram = freeram - (threads * hackRAM)
+				await ns.run(hack, threads, threads, server + ":" + counter);
+				freeram = freeram - (threads * hackRAM);
+				counter++
 			} else {
 				let report = "Starting hack.js with " + threads + " threads on " + server
 				await ns.print(report)
 				await ns.tryWritePort(8, report)
-				await ns.spawn(hack, threads, threads, server)
+				await ns.spawn(hack, threads, threads, server + ":" + counter)
 				freeram = freeram - (threads * hackRAM)
+				counter++
 			};
 		} else {
 			let report = "Not enough RAM"

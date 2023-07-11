@@ -2,7 +2,6 @@
 export async function main(ns) {
     ns.disableLog("ALL")
     // ns.tail()
-    const defaultTarget = ["nwo", "megacorp", "blade", "omnitek"]
     while (true) {
         var servers = ns.scan()
         for (let i = 0; i < servers.length; i++) {
@@ -26,15 +25,7 @@ export async function main(ns) {
                                 while (!ns.tryWritePort(7, servers[i])) {
                                     await ns.sleep(100)
                                 }
-                            } else {
-                                let targetSelect = Math.floor(Math.random() * defaultTarget.length);
-                                if (ns.scriptRunning("hacks/self.js", defaultTarget[targetSelect])) {
-                                    ns.print("Skipped: " + servers[i] + " defaulting to " + defaultTarget[targetSelect])
-                                    ns.tryWritePort(6, defaultTarget[targetSelect])
-                                } else {
-                                    ns.print("Skipped: " + servers[i])
-                                }
-                            }
+                            } 
                         }
                     } else {
                         ns.print("WARN Hack too hard: " + servers[i])
