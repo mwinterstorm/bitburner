@@ -7,7 +7,7 @@ export async function main(ns) {
 	let hack = "hacks/hack.js";
 	let spawn = "hacks/spawn.js"
 	let reserveRAM = 32; //RAM to be reserved on home computer
-	let maxThreads = 250; //Max threads to run on each instance
+	let maxThreads = [32, 64, 128, 256, 512]; //Max threads to run on each instance - random selected for each instance
 
 	const server = ns.getHostname();
 	const maxram = ns.getServerMaxRam(server);
@@ -21,9 +21,10 @@ export async function main(ns) {
 	let counter = 0; //Counter for instances on server
 	while (freeram >= hackRAM) {
 		let threads = Math.floor((freeram) / ns.getScriptRam(hack));
+		let maxIndex = Math.floor(Math.random() * maxThreads.length)
 		if (threads >= 1) {
-			if (threads > maxThreads ) {
-				threads = maxThreads;
+			if (threads > maxThreads[maxIndex] ) {
+				threads = maxThreads[maxIndex];
 				let report = "Starting hack.js with " + threads + " threads on " + server
 				await ns.print(report)
 				await ns.tryWritePort(8, report)
