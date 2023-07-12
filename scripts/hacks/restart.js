@@ -14,7 +14,7 @@ export async function main(ns) {
 			await ns.sleep(1500)
 		}
 		if (servers[i].includes("home") == true) {
-			await ns.scriptKill("share.js", servers[i])
+			await ns.scriptKill("hacks/share.js", servers[i])
 			await ns.exec("hacks/spawn.js", servers[i])
 			await ns.sleep(1500)
 		}
