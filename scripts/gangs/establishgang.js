@@ -7,31 +7,35 @@ export async function main(ns) {
 
     // if not in gang wait until can join
     if (!ns.gang.inGang()) {
-        while (!ns.gang.inGang()) {
-            let factions = ns.getPlayer().factions;
-            let factionSelect = Math.floor(Math.random() * factions.length);
-            if (factions.length > 0) {
-                ns.gang.createGang(factions[factionSelect]);
+        let factions = ns.getPlayer().factions;
+        let factionSelect = Math.floor(Math.random() * factions.length);
+        if (factions.length > 0) {
+            ns.gang.createGang(factions[factionSelect]);
+            var gangInfo = ns.gang.getGangInformation();
+            let isHacking = "unknown";
+            if (gangInfo.isHacking) {
+                isHacking = "hacking";
+            } else {
+                isHacking = "criminal";
+            };
+            let time = getTime();
+            let report = time + " - Created " + isHacking + " gang with: " + gangInfo.faction;
+            ns.tprint(report);
+            ns.print(report);
+            await ns.tryWritePort(8, report)
+            var catMembers = ns.gang.getMemberNames();
+            if (catMembers.length < maxMembers) {
+                ns.spawn("/gangs/growgang.js", 1);
+            } else {
+                ns.spawn("/gangs/rungang.js", 1);
             }
-            await ns.sleep(1200000);
-        };
-        var gangInfo = ns.gang.getGangInformation();
-        let isHacking = "unknown";
-        if (gangInfo.isHacking) {
-            isHacking = "hacking";
-        } else {
-            isHacking = "criminal";
-        };
-        let time = getTime();
-        let report = time + " - Created " + isHacking + " gang with: " + gangInfo.faction;
-        ns.tprint(report);
-        ns.print(report);
-        await ns.tryWritePort(8, report)
-        var catMembers = ns.gang.getMemberNames();
-        if (catMembers.length < maxMembers) {
-            ns.spawn("/gangs/growgang.js", 1);
-        } else {
-            ns.spawn("/gangs/rungang.js", 1);
+        }
+        if (!ns.gang.inGang()) {
+            let time = getTime();
+            let report = time + " - Cannot create gang. Exiting...";
+            ns.tprint(report);
+            ns.print(report);
+            await ns.tryWritePort(8, report)
         }
     } else {
         var gangInfo = ns.gang.getGangInformation();
