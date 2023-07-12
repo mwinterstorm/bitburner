@@ -18,7 +18,7 @@ export async function main(ns) {
 				let index = Math.floor(Math.random() * defaultTargets.length)
 				target = defaultTargets[index]
 				let error = "WARN Empty Coordination Data: " + host + " defaulting to " + target;
-				await ns.tryWritePort(8, error)
+				// await ns.tryWritePort(8, error)
 				await ns.print(error)
 			}
 		}
