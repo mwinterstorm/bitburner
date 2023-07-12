@@ -1,16 +1,11 @@
 /** @param {NS} ns */
 export async function main(ns) {
 	ns.disableLog("ALL")
-	// ns.tail()
-	// await ns.sleep(100);
-	// ns.moveTail(85, 495)
-	// ns.resizeTail(600, 300)
 	const files = ["hacks/self.js"] //files to be copied, ensure index[0] is the one to run
 	const checkHacks = ["BruteSSH.exe", "FTPCrack.exe", "relaySMTP.exe", "HTTPWorm.exe", "SQLInject.exe"]
 	let time = getTime();
 	let report = time + " - Running install..."
 	ns.print(report);
-	// await ns.tryWritePort(8, report)
 	const servers = ns.scan()
 	const hacklev = ns.getHackingLevel()
 	var hacks = []
@@ -85,6 +80,10 @@ export async function main(ns) {
 			}
 		}
 	}
+	time = getTime();
+	report = time + " - ...INSTALL complete."
+	ns.print(report)
+	await ns.tryWritePort(8, report)
 }
 
 

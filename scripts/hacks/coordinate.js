@@ -65,7 +65,15 @@ export async function main(ns) {
 		} else {
 			let time = getTime();
 			installCount = installCount + (servers.length - hackedServers)
-			ns.print(time + ": " + ns.formatNumber((installCount / (10 * servers.length)*100), 4, 1000) + "% - progress to next INSTALL run")
+			if (installCount >= (10 * servers.length)) { 
+				await ns.run("hacks/install.js");
+				let time = getTime();
+				let report = time + " - Running install.js..."
+				ns.print(report)
+				await ns.tryWritePort(8, report)
+				installCount = 0	
+			}
+			ns.print(time + " - Progress to next INSTALL run: " + ns.formatNumber((installCount / (10 * servers.length)*100), 4, 1000) + "%")
 		}
 	}
 }
