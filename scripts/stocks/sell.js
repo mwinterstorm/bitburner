@@ -11,9 +11,10 @@ export async function main(ns) {
 	ns.moveTail(850, 30)
 	ns.resizeTail(380, 270)
 	while (stocksExist == true) {
+		let stocks = getAllStocks(ns);
 		await ns.scriptKill("stocks/trade.js", "home")
 		await ns.scriptKill("stocks/earlyTrade.js", "home")
-		StockNumber = 0
+		StockNumber = stocks.length
 		await tendStocks(ns);
 		await ns.sleep(5 * 1000);
 	} 
@@ -26,6 +27,8 @@ function tendStocks(ns) {
 
     var overallValue = 0
 	for (const stock of stocks) {
+		// ns.print(stock.sym: + " proft = " + stock.profit)
+		// ns.print(stock.sym: + " shares = " + stock.longShares)
 		if (stock.profit > 2 * commission) {
 			const salePrice = ns.stock.sellStock(stock.sym, stock.longShares);
 			const saleTotal = salePrice * stock.longShares;
@@ -43,7 +46,7 @@ function tendStocks(ns) {
 			++StockNumber
 		}
 	}
-  ns.print("SELLING: Remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
+  	ns.print("SELLING: Remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
 	ns.print("SELLING: Value sold = $" + ns.formatNumber(TotalValue, 4, 1000, true))
 	ns.print("SELLING: Profit = $" + ns.formatNumber(TotalProfit, 4, 1000, true))
 
