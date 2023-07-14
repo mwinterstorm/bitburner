@@ -65,7 +65,7 @@ export async function main(ns) {
             let hacklog1 = ns.formatNumber(hacklog,4,1000,true)
             let monlog3 = ns.formatNumber(monlog2,4,1000,true)
             let time = getTime()
-            let report = "SUCCESS " + time + " - Hacked " + target + " from " + host + ": " + hacklog1 + " (" + monlog3 + " / " + maxmon1 + ")"
+            let report = time + " - SUCCESS! Hacked " + target + " from " + host + ": " + hacklog1 + " (" + monlog3 + " / " + maxmon1 + ")"
             await ns.print(report)
             if (hacklog > 0) {
                 if (Math.random() >= 0.66) {

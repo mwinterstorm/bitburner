@@ -4,10 +4,26 @@ export async function main(ns) {
     // ns.tail()
     while (true) {
         await ns.share()
-        let report = "Reputation Gain: " + ns.formatPercent(ns.getSharePower() - 1)
+        let time = getTime()
+        let report = time + " - Reputation Gain: " + ns.formatPercent(ns.getSharePower() - 1)
         ns.print(report)
         if (Math.random() > 0.95) {
             ns.tryWritePort(8, report)
         }
     }
+}
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
 }

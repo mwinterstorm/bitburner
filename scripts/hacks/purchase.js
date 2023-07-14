@@ -13,12 +13,15 @@ export async function main(ns) {
 		let ram = 2 ** n;
 		let i = ns.getPurchasedServers().length;
 		while (i < numberServers) {
-			await ns.print("Purchasing: $" + ns.formatNumber(ns.getPurchasedServerCost(ram), 0) + " for " + ram + " ram")
+			let time = getTime()
+			let report = time + " - Purchasing: markwr-" + i + "... $" + ns.formatNumber(ns.getPurchasedServerCost(ram), 0) + " for " + ram + " ram";
+			await ns.print(report)
 			if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)) {
 				let hostname = ns.purchaseServer("markwr-" + i, ram);
 				ns.scp(files, hostname);
 				await ns.exec("hacks/spawn.js", hostname);
-				let report = "SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM"
+				let time = getTime();
+				let report = time + " - SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM"
 				await ns.print(report)
 				await ns.tryWritePort(8, report) 
 				++i;
@@ -47,10 +50,13 @@ export async function main(ns) {
                     let cost = ns.getPurchasedServerUpgradeCost(hostname, ram)
                     let cost1 = ns.formatNumber(cost, 4, 1000, true);
                     let cost2 = ns.formatNumber(2 * cost, 4,1000,true);
-					await ns.print("INFO $" + cost1 + " ($" + (cost2) + ") to upgrade " + hostname + " to " + ram + "GB ram.")
+					let time = getTime();
+					let report = time + " - INFO $" + cost1 + " ($" + (cost2) + ") to upgrade " + hostname + " to " + ram + "GB ram.";
+					await ns.print(report)
 					if (ns.getServerMoneyAvailable("home") > (2 * ns.getPurchasedServerUpgradeCost(hostname, ram))) {
 						await ns.upgradePurchasedServer(hostname, ram)
-						let report = "SUCCESS Upgraded " + hostname + " to " + ram + "GB RAM"
+						let time = getTime()
+						let report = time + " - SUCCESS Upgraded " + hostname + " to " + ram + "GB RAM"
 						await ns.print(report)
 						await ns.tryWritePort(8, report)
 						await ns.scriptKill("hacks/hack.js", hostname)
@@ -59,7 +65,8 @@ export async function main(ns) {
 						await ns.sleep(1003)
 					}
 				} else {
-					let report = "WARN " + hostname + " is fully upgraded"
+					let time = getTime()
+					let report = time + " - WARN " + hostname + " is fully upgraded"
 					await ns.print(report)
 					await ns.tryWritePort(8, report)
 					if (maxed.includes(hostname) != true) {
@@ -72,9 +79,25 @@ export async function main(ns) {
 		}
 	}
 	await ns.sleep(1005)
-	let report = "SUCCESS All servers fully upgraded"
+	let time = getTime()
+	let report = time + " - SUCCESS All servers fully upgraded"
 	await ns.print(report)
 	await ns.tprint(report)
 	await ns.tryWritePort(8, report)
 
+}
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
 }

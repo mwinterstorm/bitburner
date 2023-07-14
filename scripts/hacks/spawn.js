@@ -30,26 +30,44 @@ export async function main(ns) {
 		if (threads >= 1) {
 			if (threads > maxThreads[maxIndex] ) {
 				threads = maxThreads[maxIndex];
-				let report = "Starting hack.js with " + threads + " threads on " + server
-				await ns.print(report)
-				await ns.tryWritePort(8, report)
+				let time = getTime();
+				let report = time + " - Starting hack.js with " + threads + " threads on " + server;
+				await ns.print(report);
+				await ns.tryWritePort(8, report);
 				await ns.run(hack, threads, threads, server + "." + counter);
 				freeram = freeram - (threads * hackRAM);
-				counter++
+				counter++;
 			} else {
-				let report = "Starting hack.js with " + threads + " threads on " + server
-				await ns.print(report)
-				await ns.tryWritePort(8, report)
-				await ns.spawn(hack, threads, threads, server + "." + counter)
-				freeram = freeram - (threads * hackRAM)
-				counter++
+				let time = getTime();
+				let report = time + " - Starting hack.js with " + threads + " threads on " + server;
+				await ns.print(report);
+				await ns.tryWritePort(8, report);
+				await ns.spawn(hack, threads, threads, server + "." + counter);
+				freeram = freeram - (threads * hackRAM);
+				counter++;
 			};
 		} else {
-			let report = "Not enough RAM"
+			let time = getTime();
+			let report = time + " - FAIL! Not enough RAM for HACK";
 			await ns.print(report)
 			await ns.tryWritePort(8, report)
 			
 		}
 		await ns.sleep(500)
 	};
+}
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
 }

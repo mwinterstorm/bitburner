@@ -3,7 +3,7 @@ export async function main(ns) {
     ns.tail();
 
     const fraudManager = "corp/fraudManager.js";
-    const spenders = ns.args[0];
+    var spenders = ns.args[0].split(",");
 
     let corporation = ns.corporation.getCorporation();
     let myShares = corporation.numShares;
@@ -35,8 +35,8 @@ export async function main(ns) {
 
     // Restart Spenders
     let startedSpenders = [];
-    for (s = 0; s < spenders.length; s++) {
-        if (!ns.scriptRunning(spenders[s])) {
+    for (let s = 0; s < spenders.length; s++) {
+        if (!ns.scriptRunning(spenders[s], "home")) {
             let time = getTime();
             let report = time + "- INFO! Starting Spender: " + spenders[s] + "..."
             ns.print(report);

@@ -14,8 +14,8 @@ export async function main(ns) {
 
     // Stop spenders
     var spendersRunning = [];
-    for (s = 0; s < spenders.length; s++) {
-        if (ns.scriptRunning(spenders[s])) {
+    for (let s = 0; s < spenders.length; s++) {
+        if (ns.scriptRunning(spenders[s], "home")) {
             await ns.scriptKill(spenders[s], "home");
             spendersRunning.push[spenders[s]]
         }
@@ -23,13 +23,14 @@ export async function main(ns) {
 
     // Report
     let time = getTime();
-    let report = time + " - INFO! Spenders stopped (" + spendersRunning + ")...";
+    let report = time + " - INFO! Spenders stopped (" + spendersRunning.toString() + ")...";
     ns.print(report)
     report = time + " - INFO! Starting Repurchase Fraud...";
     ns.print(report)
 
     // Spawn Repurchase Fruad
-    await ns.spawn(fraud, 1, spendersRunning);
+    let arg = spendersRunning.toString();
+    await ns.spawn(fraud, 1, arg);
 }
 
 function getTime() {

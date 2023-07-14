@@ -36,18 +36,6 @@ function tendStocks(ns) {
     var shortStocks = new Set();
     var numberStocks = 0
 
-    const d = new Date();
-    let hrs = d.getHours();
-    let hours = hrs;
-    if (hrs <= 9) { hours = "0" + hrs; }
-    let min = d.getMinutes();
-    let minutes = min;
-    if (min <= 9) { minutes = "0" + min; }
-    let sec = d.getSeconds();
-    let seconds = sec;
-    if (sec <= 9) { seconds = "0" + sec; }
-    let formattedTime = hours + ':' + minutes + ':' + seconds;
-
     for (const stock of stocks) {
         if (stock.longShares > 0) {
             if (stock.forecast > 0.5) {
@@ -63,7 +51,8 @@ function tendStocks(ns) {
                 const saleProfit = saleTotal - saleCost - 2 * commission;
                 stock.shares = 0;
                 shortStocks.add(stock.sym);
-                let report = formattedTime + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
+                let time = getTime()
+                let report = time + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
                 ns.tryWritePort(8, report)
             }
@@ -82,7 +71,8 @@ function tendStocks(ns) {
                 const saleProfit = saleTotal - saleCost - 2 * commission;
                 stock.shares = 0;
                 longStocks.add(stock.sym);
-                let report = formattedTime + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
+                let time = getTime()
+                let report = time + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
                 ns.tryWritePort(8, report)
             }
@@ -97,7 +87,8 @@ function tendStocks(ns) {
             if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.askPrice));
                 if (ns.stock.buyStock(stock.sym, sharesToBuy) > 0) {
-                    let report = formattedTime + ` - INFO ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
+                    let time = getTime()
+                    let report = time + ` - INFO ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
                     ns.print(report);
                     ns.tryWritePort(8, report);    
                     tradeMoney -= (sharesToBuy * stock.askPrice) + commission;
@@ -112,7 +103,8 @@ function tendStocks(ns) {
             if (tradeActive == true) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.bidPrice));
                 if (ns.stock.buyShort(stock.sym, sharesToBuy) > 0) {
-                    let report = formattedTime + ` - WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
+                    let time = getTime()
+                    let report = time + ` - WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
                     ns.print(report);
                     ns.tryWritePort(8, report);    
                     tradeMoney = tradeMoney - ((sharesToBuy * stock.bidPrice) + commission)
@@ -123,7 +115,8 @@ function tendStocks(ns) {
         }
     }
     if (Math.random() >= 0.82) {
-        let report = formattedTime + " - Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)";
+        let time = getTime()
+        let report = time + " - Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)";
         ns.print(report);
         ns.tryWritePort(8, report);
     };
@@ -168,4 +161,19 @@ export function getAllStocks(ns) {
         stocks.push(stock);
     }
     return stocks;
+}
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
 }
