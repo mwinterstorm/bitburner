@@ -1,7 +1,8 @@
 const commission = 100000;
+
+var TotalValue = 0
 var stocksExist = true
 var TotalProfit = 0
-var TotalValue = 0
 var StockNumber = 0
 
 export async function main(ns) {
@@ -11,13 +12,24 @@ export async function main(ns) {
 	ns.moveTail(850, 30)
 	ns.resizeTail(380, 270)
 	while (stocksExist == true) {
-		let stocks = getAllStocks(ns);
 		await ns.scriptKill("stocks/trade.js", "home")
 		await ns.scriptKill("stocks/earlyTrade.js", "home")
-		StockNumber = stocks.length
+		let allstocks = getAllStocks(ns);
+		let ownedstocks = []
+		for (const stock of allstocks) {
+			if (stock.longShares >= 1) {
+				StockNumber = StockNumber + 1
+				ownedstocks.push(stock)
+			} else if (stock.shortShares >= 1) {
+				StockNumber = StockNumber + 1
+				ownedstocks.push(stock)
+			}
+		}
+		ns.print("Stocks Owned: " + ownedstocks.length)
+		StockNumber = ownedstocks.length
 		await tendStocks(ns);
 		await ns.sleep(5 * 1000);
-	} 
+	}
 	ns.print("All Stocks Sold for $" + ns.formatNumber(TotalValue, 4, 1000, true) + "(Profit: $" + ns.formatNumber(TotalProfit, 4, 1000, true) + ")")
 }
 
@@ -25,7 +37,7 @@ function tendStocks(ns) {
 	ns.print("");
 	var stocks = getAllStocks(ns);
 
-    var overallValue = 0
+	var overallValue = 0
 	for (const stock of stocks) {
 		// ns.print(stock.sym: + " proft = " + stock.profit)
 		// ns.print(stock.sym: + " shares = " + stock.longShares)
@@ -42,11 +54,11 @@ function tendStocks(ns) {
 			const saleProfit = ((stock.bidPrice - stock.longPrice) * stock.longShares) - (2 * commission);
 			const stockValue = (stock.bidPrice * stock.longShares)
 			ns.print(`FAIL ${stock.summary}: ${ns.formatNumber(saleProfit, 4, 1000, true)} of ${ns.formatNumber(stockValue, 4, 1000, true)}`)
-            overallValue += stockValue
+			overallValue += stockValue
 			++StockNumber
 		}
 	}
-  	ns.print("SELLING: Remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
+	ns.print("SELLING: Remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
 	ns.print("SELLING: Value sold = $" + ns.formatNumber(TotalValue, 4, 1000, true))
 	ns.print("SELLING: Profit = $" + ns.formatNumber(TotalProfit, 4, 1000, true))
 
