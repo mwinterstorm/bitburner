@@ -9,15 +9,17 @@ export async function main(ns) {
 		let target = ns.readPort(7);
 		while (target == "NULL PORT DATA") {
 			if (defaultTargets.length == 0) {
-				let error = "FAIL Empty Coordination Data (retrying in 5s): " + host;
+				let time = getTime()
+				let error = time + " - FAIL Empty Coordination Data (retrying in 10s): " + host;
 				await ns.tryWritePort(8, error)
 				await ns.print(error)
-				await ns.sleep(5000)
+				await ns.sleep(10000)
 				target = ns.readPort(7);
 			} else {
 				let index = Math.floor(Math.random() * defaultTargets.length)
 				target = defaultTargets[index]
-				let error = "WARN Empty Coordination Data: " + host + " defaulting to " + target;
+				let time = getTime()
+				let error = time + " - WARN Empty Coordination Data: " + host + " defaulting to " + target;
 				// await ns.tryWritePort(8, error)
 				await ns.print(error)
 			}
@@ -67,7 +69,8 @@ export async function main(ns) {
 			let growlog = await ns.grow(target);
 			let monlog = moneyAvailable * growlog
 			let monlog4 = ns.formatNumber(monlog, 4, 1000, true)
-			let report = "WARN Grown " + target + " from " + host + ": " + ns.formatPercent(growlog - 1, 4) + " (" + monlog4 + " / " + maxmon1 + ")"
+			let time = getTime()
+			let report = time + " - WARN Grown " + target + " from " + host + ": " + ns.formatPercent(growlog - 1, 4) + " (" + monlog4 + " / " + maxmon1 + ")"
 			await ns.print(report)
 			// await ns.tryWritePort(8, report)
 		} else {
@@ -80,10 +83,31 @@ export async function main(ns) {
 			let monlog2 = moneyAvailable - hacklog;
 			let hacklog1 = ns.formatNumber(hacklog, 4, 1000, true)
 			let monlog3 = ns.formatNumber(monlog2, 4, 1000, true)
-			let report = "SUCCESS Hacked " + target + " from " + host + ": " + hacklog1 + " (" + monlog3 + " / " + maxmon1 + ")"
+			let time = getTime()
+			let report = time + " - SUCCESS Hacked " + target + " from " + host + ": " + hacklog1 + " (" + monlog3 + " / " + maxmon1 + ")"
 			await ns.print(report)
-			await ns.tryWritePort(8, report)
+			// await ns.tryWritePort(8, report)
+			let currentEarnings = ns.readPort(1);
+			if (currentEarnings != "NULL PORT DATA") {
+				let totalEarnings = currentEarnings + hacklog
+				await ns.tryWritePort(1, totalEarnings)
+			}
 
 		}
 	}
+}
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
 }

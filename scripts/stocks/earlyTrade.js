@@ -114,6 +114,11 @@ export async function main(ns) {
           if (sellPrice > 0) {
             sold = true;
             ns.print(`INFO SOLD (long) ${sym}. Profit: ${format(profit)}`);
+            let currentEarnings = ns.readPort(1);
+            if (currentEarnings != "NULL PORT DATA") {
+              let totalEarnings = currentEarnings + profit
+              ns.tryWritePort(1, totalEarnings)
+            }
           }
         } else {
           longStocks.add(sym);
@@ -128,6 +133,11 @@ export async function main(ns) {
           if (sellPrice > 0) {
             sold = true;
             ns.print(`INFO SOLD (short) ${sym}. Profit: ${format(profit)}`);
+            let currentEarnings = ns.readPort(1);
+            if (currentEarnings != "NULL PORT DATA") {
+              let totalEarnings = currentEarnings + profit
+              ns.tryWritePort(1, totalEarnings)
+            }
           }
         } else {
           shortStocks.add(sym);

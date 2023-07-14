@@ -1,6 +1,6 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    ns.tail();
+    // ns.tail();
 
     const fraud = "corp/repurchaseFraud.js"
     const cooldown = ns.args[0];
@@ -17,19 +17,22 @@ export async function main(ns) {
     for (let s = 0; s < spenders.length; s++) {
         if (ns.scriptRunning(spenders[s], "home")) {
             await ns.scriptKill(spenders[s], "home");
-            spendersRunning.push[spenders[s]]
+            spendersRunning.push(spenders[s])
         }
     }
 
     // Report
     let time = getTime();
-    let report = time + " - INFO! Spenders stopped (" + spendersRunning.toString() + ")...";
+    let arg = spendersRunning.toString();
+    let report = time + " - INFO! Spenders stopped (" + arg + ")...";
     ns.print(report)
+    await ns.tryWritePort(8, report)
     report = time + " - INFO! Starting Repurchase Fraud...";
     ns.print(report)
+    await ns.tryWritePort(8, report)
+
 
     // Spawn Repurchase Fruad
-    let arg = spendersRunning.toString();
     await ns.spawn(fraud, 1, arg);
 }
 

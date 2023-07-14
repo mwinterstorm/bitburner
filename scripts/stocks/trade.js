@@ -13,9 +13,9 @@ var overallValue = 0;
 export async function main(ns) {
     ns.disableLog("ALL");
     // ns.tail();
-    await ns.sleep(100);
-    ns.moveTail(850, 0)
-    ns.resizeTail(380, 300)
+    // await ns.sleep(100);
+    // ns.moveTail(850, 0)
+    // ns.resizeTail(380, 300)
 
     while (true) {
         money = ns.getServerMoneyAvailable("home");
@@ -55,6 +55,11 @@ function tendStocks(ns) {
                 let report = time + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
                 ns.tryWritePort(8, report)
+                let currentEarnings = ns.readPort(1);
+                if (currentEarnings != "NULL PORT DATA") {
+                    let totalEarnings = currentEarnings + saleProfit
+                    ns.tryWritePort(1, totalEarnings)
+                }
             }
         }
         if (stock.shortShares > 0) {
@@ -75,6 +80,11 @@ function tendStocks(ns) {
                 let report = time + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
                 ns.tryWritePort(8, report)
+                let currentEarnings = ns.readPort(1);
+                if (currentEarnings != "NULL PORT DATA") {
+                    let totalEarnings = currentEarnings + saleProfit
+                    ns.tryWritePort(1, totalEarnings)
+                }
             }
         }
     }
@@ -88,7 +98,7 @@ function tendStocks(ns) {
                 const sharesToBuy = Math.min(stock.maxShares, Math.floor((tradeMoney - commission) / stock.askPrice));
                 if (ns.stock.buyStock(stock.sym, sharesToBuy) > 0) {
                     let time = getTime()
-                    let report = time + ` - INFO ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
+                    let report = time + ` - WARN ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
                     ns.print(report);
                     ns.tryWritePort(8, report);    
                     tradeMoney -= (sharesToBuy * stock.askPrice) + commission;
@@ -116,7 +126,7 @@ function tendStocks(ns) {
     }
     if (Math.random() >= 0.82) {
         let time = getTime()
-        let report = time + " - Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)";
+        let report = time + " - INFO Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)";
         ns.print(report);
         ns.tryWritePort(8, report);
     };

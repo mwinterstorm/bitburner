@@ -30,7 +30,8 @@ export async function main(ns) {
 		await tendStocks(ns);
 		await ns.sleep(5 * 1000);
 	}
-	ns.print("All Stocks Sold for $" + ns.formatNumber(TotalValue, 4, 1000, true) + "(Profit: $" + ns.formatNumber(TotalProfit, 4, 1000, true) + ")")
+	let time = getTime();
+	let report = time + " - SUCCESS! All Stocks Sold for $" + ns.formatNumber(TotalValue, 4, 1000, true) + "(Profit: $" + ns.formatNumber(TotalProfit, 4, 1000, true) + ")";
 }
 
 function tendStocks(ns) {
@@ -47,13 +48,24 @@ function tendStocks(ns) {
 			const saleCost = stock.longPrice * stock.longShares;
 			const saleProfit = saleTotal - saleCost - 2 * commission;
 			stock.shares = 0;
-			ns.print(`SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`);
+			let time = getTime()
+			let report = time + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
+			ns.print(report);
+			ns.tryWritePort(8, report)
 			TotalProfit += saleProfit
 			TotalValue += saleTotal
+			let currentEarnings = ns.readPort(1);
+			if (currentEarnings != "NULL PORT DATA") {
+				let totalEarnings = currentEarnings + saleProfit
+				ns.tryWritePort(1, totalEarnings)
+			}
 		} else if (stock.longShares >= 1) {
 			const saleProfit = ((stock.bidPrice - stock.longPrice) * stock.longShares) - (2 * commission);
 			const stockValue = (stock.bidPrice * stock.longShares)
-			ns.print(`FAIL ${stock.summary}: ${ns.formatNumber(saleProfit, 4, 1000, true)} of ${ns.formatNumber(stockValue, 4, 1000, true)}`)
+			let time = getTime();
+			let report = time + ` - FAIL ${stock.summary}: ${ns.formatNumber(saleProfit, 4, 1000, true)} of ${ns.formatNumber(stockValue, 4, 1000, true)}`
+			ns.print(report);
+			ns.tryWritePort(8, report)
 			overallValue += stockValue
 			++StockNumber
 		}
@@ -101,4 +113,19 @@ export function getAllStocks(ns) {
 		stocks.push(stock);
 	}
 	return stocks;
+}
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
 }

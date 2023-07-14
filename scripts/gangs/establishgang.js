@@ -11,23 +11,25 @@ export async function main(ns) {
         let factionSelect = Math.floor(Math.random() * factions.length);
         if (factions.length > 0) {
             ns.gang.createGang(factions[factionSelect]);
-            var gangInfo = ns.gang.getGangInformation();
-            let isHacking = "unknown";
-            if (gangInfo.isHacking) {
-                isHacking = "hacking";
-            } else {
-                isHacking = "criminal";
-            };
-            let time = getTime();
-            let report = time + " - Created " + isHacking + " gang with: " + gangInfo.faction;
-            ns.tprint(report);
-            ns.print(report);
-            await ns.tryWritePort(8, report)
-            var catMembers = ns.gang.getMemberNames();
-            if (catMembers.length < maxMembers) {
-                ns.spawn("/gangs/growgang.js", 1);
-            } else {
-                ns.spawn("/gangs/rungang.js", 1);
+            if (ns.gang.inGang()) { 
+                var gangInfo = ns.gang.getGangInformation();
+                let isHacking = "unknown";
+                if (gangInfo.isHacking) {
+                    isHacking = "hacking";
+                } else {
+                    isHacking = "criminal";
+                };
+                let time = getTime();
+                let report = time + " - Created " + isHacking + " gang with: " + gangInfo.faction;
+                ns.tprint(report);
+                ns.print(report);
+                await ns.tryWritePort(8, report)
+                var catMembers = ns.gang.getMemberNames();
+                if (catMembers.length < maxMembers) {
+                    ns.spawn("/gangs/growgang.js", 1);
+                } else {
+                    ns.spawn("/gangs/rungang.js", 1);
+                }
             }
         }
         if (!ns.gang.inGang()) {

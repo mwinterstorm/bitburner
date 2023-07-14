@@ -9,6 +9,7 @@ export async function main(ns) {
     await ns.sleep(500)
     
     await ns.tprint("Starting REPORT...")
+	await ns.tryWritePort(1, 0)
     await ns.run("utils/report.js");
     await ns.sleep(500)
 
@@ -21,6 +22,16 @@ export async function main(ns) {
     await ns.sleep(500)
     await ns.tprint("...waiting to crawl servers...")
     await ns.sleep(5000)
+
+    // CORPORATION
+    if (ns.corporation.hasCorporation()) {
+        await ns.tprint("Starting CORPORATE FRAUD...")
+        await ns.run("corp/fraudManager.js");
+        await ns.sleep(5000)  
+    } else {
+        await ns.tprint("Skipping CORPORATE FRAUD, no Corporation Owned...")
+        await ns.sleep(150) 
+    }
 
     // GANGS
     await ns.tprint("Starting GANGS...")

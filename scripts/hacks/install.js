@@ -26,7 +26,7 @@ export async function main(ns) {
 						if (threads >= 1) {
 							await ns.exec(files[0], servers[i], threads, servers[i])
 							let time = getTime();
-							let report = time + " - SUCCESS Running self.js with " + threads + " threads on " + servers[i]
+							let report = time + " - Running self.js with " + threads + " threads on " + servers[i]
 							ns.print(report)
 							await ns.tryWritePort(8, report)
 							await ns.sleep(500)
@@ -61,7 +61,7 @@ export async function main(ns) {
 					if (threads >= 1) {
 						await ns.exec(files[0], servers[i], threads, servers[i])
 						let time = getTime();
-						let report = time + " - SUCCESS Running self.js with " + threads + " threads on " + servers[i]
+						let report = time + " - Running self.js with " + threads + " threads on " + servers[i]
 						ns.print(report)
 						await ns.tryWritePort(8, report)
 						await ns.sleep(500)
