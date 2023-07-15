@@ -7,13 +7,15 @@ export async function main(ns) {
 	let defaultTargets = [];
 	while (true) {
 		let target = ns.readPort(7);
+		let retrysec = 1;
 		while (target == "NULL PORT DATA") {
 			if (defaultTargets.length == 0) {
 				let time = getTime()
-				let error = time + " - FAIL Empty Coordination Data (retrying in 10s): " + host;
+				let error = time + " - FAIL Empty Coordination Data (retrying in " + retrysec + "s): " + host;
 				await ns.tryWritePort(8, error)
 				await ns.print(error)
-				await ns.sleep(10000)
+				await ns.sleep(retrysec * 1000);
+				retrysec = retrysec + 1;
 				target = ns.readPort(7);
 			} else {
 				let index = Math.floor(Math.random() * defaultTargets.length)
