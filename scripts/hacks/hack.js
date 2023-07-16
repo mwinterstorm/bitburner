@@ -14,16 +14,16 @@ export async function main(ns) {
 				let error = time + " - FAIL Empty Coordination Data (retrying in " + retrysec + "s): " + host;
 				await ns.tryWritePort(8, error)
 				await ns.print(error)
-				if (Math.random() <= 0.1) {
-					await ns.sleep(retrysec * 1000);
-				}
+				await ns.sleep(retrysec * 1000);
 				retrysec = retrysec + 1;
 				target = ns.readPort(7);
 				if (target == "NULL PORT DATA") {
-					alttarget = ns.readPort(6)
-					if (!defaultTargets.includes(alttarget)) {
-						defaultTargets.push(alttarget)
-					} 
+					let alttarget = ns.readPort(6)
+					if (alttarget != "NULL PORT DATA") {
+						if (!defaultTargets.includes(alttarget)) {
+							defaultTargets.push(alttarget)
+						} 
+					}
 				}
 			} else {
 				let index = Math.floor(Math.random() * defaultTargets.length)
