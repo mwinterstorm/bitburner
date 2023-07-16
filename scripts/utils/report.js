@@ -74,7 +74,7 @@ export async function main(ns) {
             let stockearnings = ns.readPort(3)
             let stockeps = 0;
             let stockave = 0;
-            await ns.tryWritePort(2, 0)
+            await ns.tryWritePort(3, 0)
             if (stockearnings != "NULL PORT DATA") {
                 stockeps = (stockearnings / (waitTimer / 1000))
                 let stocktotalearn = 0
