@@ -67,10 +67,10 @@ export async function main(ns) {
             let time = getTime()
             let report = time + " - SUCCESS! Hacked " + target + " from " + host + ": " + hacklog1 + " (" + monlog3 + " / " + maxmon1 + ")"
             await ns.print(report)
-            let currentEarnings = ns.readPort(1);
+            let currentEarnings = ns.readPort(2);
 			if (currentEarnings != "NULL PORT DATA") {
                 let totalEarnings = currentEarnings + hacklog
-                await ns.tryWritePort(1, totalEarnings)
+                await ns.tryWritePort(2, totalEarnings)
             }
             // if (hacklog > 0) {
                 // if (Math.random() >= 0.66) {

@@ -80,10 +80,10 @@ function tendStocks(ns) {
                 let report = time + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
                 ns.tryWritePort(8, report)
-                let currentEarnings = ns.readPort(1);
+                let currentEarnings = ns.readPort(3);
                 if (currentEarnings != "NULL PORT DATA") {
                     let totalEarnings = currentEarnings + saleProfit
-                    ns.tryWritePort(1, totalEarnings)
+                    ns.tryWritePort(3, totalEarnings)
                 }
             }
         }

@@ -1,11 +1,25 @@
 /** @param {NS} ns */
 export async function main(ns) {
     ns.tail()
+    const minSleep = 30 //time in sec to min sleep between runs
+    const maxSleep = 60 //time in sec to min sleep between runs
     while (true) {
+        await reportDividends(ns);
         await tendProducts(ns);
         await commitInsiderTrading(ns);
-        await ns.sleep(120000)
+        let sleep = Math.floor(Math.random() * maxSleep);
+        if (sleep <= minSleep) {
+            sleep = 30;
+        }
+        await ns.sleep(sleep * 1000);
     }
+}
+
+async function reportDividends(ns) {
+    let corporation = ns.corporation.getCorporation();    
+    // Dividends for reporting
+    let dividends = corporation.dividendEarnings
+    await ns.tryWritePort(4, dividends)
 }
 
 async function tendProducts(ns) {
@@ -86,11 +100,6 @@ async function commitInsiderTrading(ns) {
         "hacks/purchase.js"
     ]
 
-    // Dividends for reporting
-    let dividends = corporation.dividendEarnings
-    ns.clearPort(2)
-    await ns.tryWritePort(2, dividends)
-
     // MARKET MANIPULATION
     if (cooldown == 0) {
 
@@ -129,10 +138,10 @@ async function commitInsiderTrading(ns) {
             let report = time + " - SUCCESS! Market manipulated and $" + ns.formatNumber(profit, 4, 1000, true) + " stolen";
             ns.print(report);
             await ns.tryWritePort(8, report)
-            let currentEarnings = ns.readPort(1);
+            let currentEarnings = ns.readPort(5);
             if (currentEarnings != "NULL PORT DATA") {
                 let totalEarnings = currentEarnings + profit
-                await ns.tryWritePort(1, totalEarnings)
+                await ns.tryWritePort(5, totalEarnings)
             }
         } else {
             let time = getTime();
@@ -141,10 +150,10 @@ async function commitInsiderTrading(ns) {
             let report = time + " - FAIL! Market manipulated and $" + ns.formatNumber(profit, 4, 1000, true) + " stolen but " + ns.formatNumber(sharesLost, 4, 1000, true) + " shares lost";
             ns.print(report);
             await ns.tryWritePort(8, report)
-            let currentEarnings = ns.readPort(1);
+            let currentEarnings = ns.readPort(5);
             if (currentEarnings != "NULL PORT DATA") {
                 let totalEarnings = currentEarnings + profit
-                await ns.tryWritePort(1, totalEarnings)
+                await ns.tryWritePort(5, totalEarnings)
             }
         }
 
@@ -175,10 +184,6 @@ async function commitInsiderTrading(ns) {
         }
     }
 }
-
-// async function purchaseResearch(ns) {
-
-// }
 
 function getTime() {
     const d = new Date();
