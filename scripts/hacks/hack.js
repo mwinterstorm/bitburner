@@ -19,6 +19,12 @@ export async function main(ns) {
 				}
 				retrysec = retrysec + 1;
 				target = ns.readPort(7);
+				if (target == "NULL PORT DATA") {
+					alttarget = ns.readPort(6)
+					if (!defaultTargets.includes(alttarget)) {
+						defaultTargets.push(alttarget)
+					} 
+				}
 			} else {
 				let index = Math.floor(Math.random() * defaultTargets.length)
 				target = defaultTargets[index]

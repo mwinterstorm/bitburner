@@ -22,6 +22,7 @@ export async function main(ns) {
 							while (!ns.tryWritePort(7, servers[i])) {
 								await ns.sleep(25)
 							}
+							ns.tryWritePort(6, servers[i])
 							ns.print("SUCCESS hack.js add: " + servers[i])
 						} else {
 							if (Math.random() < 0.1) {
