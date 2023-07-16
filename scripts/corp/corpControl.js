@@ -1,6 +1,6 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    ns.tail()
+    // ns.tail()
     const minSleep = 30 //time in sec to min sleep between runs
     const maxSleep = 60 //time in sec to min sleep between runs
     while (true) {
@@ -19,7 +19,8 @@ async function reportDividends(ns) {
     let corporation = ns.corporation.getCorporation();    
     // Dividends for reporting
     let dividends = corporation.dividendEarnings
-    await ns.tryWritePort(4, dividends)
+    await ns.clearPort(4);
+    await ns.tryWritePort(4, dividends);
 }
 
 async function tendProducts(ns) {

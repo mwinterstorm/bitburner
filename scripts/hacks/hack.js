@@ -6,7 +6,7 @@ export async function main(ns) {
 	const host = ns.args[1] + "(" + threads + ")";
 	let defaultTargets = [];
 	while (true) {
-		let target = ns.readPort(7);
+		let target = ns.readPort(20);
 		let retrysec = 1;
 		while (target == "NULL PORT DATA") {
 			if (defaultTargets.length == 0) {
@@ -16,9 +16,9 @@ export async function main(ns) {
 				await ns.print(error)
 				await ns.sleep(retrysec * 1000);
 				retrysec = retrysec + 1;
-				target = ns.readPort(7);
+				target = ns.readPort(20);
 				if (target == "NULL PORT DATA") {
-					let alttarget = ns.readPort(6)
+					let alttarget = ns.readPort(19)
 					if (alttarget != "NULL PORT DATA") {
 						if (!defaultTargets.includes(alttarget)) {
 							defaultTargets.push(alttarget)

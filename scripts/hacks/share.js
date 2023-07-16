@@ -5,11 +5,13 @@ export async function main(ns) {
     while (true) {
         await ns.share()
         let time = getTime()
-        let report = time + " - Reputation Gain: " + ns.formatPercent(ns.getSharePower() - 1)
+        let sharePower = ns.getSharePower() - 1
+        let report = time + " - Reputation Gain: " + ns.formatPercent(sharePower)
         ns.print(report)
         if (Math.random() > 0.95) {
-            ns.tryWritePort(8, report)
+            // ns.tryWritePort(8, report)
         }
+        ns.tryWritePort(9, sharePower)
     }
 }
 

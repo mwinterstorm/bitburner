@@ -5,7 +5,7 @@ export async function main(ns) {
     const host = ns.getHostname()
     const threads = ns.args[0]
     while (true) {
-        let coord = ns.readPort(7);
+        let coord = ns.readPort(20);
         let target = host;
         if (Math.random() > 0.3) {
             if (coord != "NULL PORT DATA") {

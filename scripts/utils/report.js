@@ -14,6 +14,7 @@ export async function main(ns) {
     var stockearArr = [];
     var divArr = [];
     var fraudArr = [];
+    var gangArr = [];
     while (true) {
         let wait = Math.floor(Math.random() * maxwait);
         if (wait < 25) {
@@ -31,7 +32,7 @@ export async function main(ns) {
         if (waitTimer >= earningsReportPeriod) {
             let elength = (aveEarnPeriod * 60 * 1000) / earningsReportPeriod
 
-            // calculate earnings from hack.js
+            // calculate earnings from hack.js 
             let earnings = ns.readPort(1)
             let hackeps = 0
             let hackaveEarn = 0
@@ -48,6 +49,7 @@ export async function main(ns) {
                 }
                 hackaveEarn = ((totalEarn / earnArr.length) / (waitTimer / 1000))
             }
+            let reportHack = "HACK          : $" + ns.formatNumber(hackeps, 1, 1000, true) + "/s | $" + ns.formatNumber(hackaveEarn, 1, 1000, true) + "/s" 
 
             //calculate earnings from self.js
             let selfearnings = ns.readPort(2)
@@ -66,6 +68,7 @@ export async function main(ns) {
                 }
                 selfaveEarn = ((selftotalEarn / selfearnArr.length) / (waitTimer / 1000))
             }
+            let reportSelf = "SELF          : $" + + ns.formatNumber(selfeps, 1, 1000, true) + "/s | $" + ns.formatNumber(selfaveEarn, 1, 1000, true) + "/s"
 
             //calculate stock market EPS
             let stockearnings = ns.readPort(3)
@@ -84,6 +87,16 @@ export async function main(ns) {
                 }
                 stockave = ((stocktotalearn / stockearArr.length) / (waitTimer / 1000))
             }
+            let stockValue = ns.readPort(6)
+            if (stockValue == "NULL PORT DATA") {
+                stockValue = 0
+            }
+            let stockNumber = ns.readPort(7)
+            if (stockNumber == "NULL PORT DATA") {
+                stockNumber = 0
+            }
+            let reportTrade = "TRADING       : $" + ns.formatNumber(stockeps, 1, 1000, true) + "/s | $" + ns.formatNumber(stockave, 1, 1000, true) + "/s; Total Value Owned: $" + ns.formatNumber(stockValue, 1, 1000, true) + " in " + ns.formatNumber(stockNumber, 0, 1000, true) + " stocks"
+
 
             // gather dividend EPS
             let dividends = ns.peek(4);
@@ -98,7 +111,8 @@ export async function main(ns) {
             for (let e = 0; e < divArr.length; e++) {
                 divTotal = divArr[e] + divTotal
             }
-            let divAve = ((divTotal / divArr.length) / (waitTimer / 1000));
+            let divAve = divTotal / divArr.length;
+            let reportCorpDiv = "CORP dividends: $" + ns.formatNumber(dividends, 1, 1000, true) + "/s | $" + ns.formatNumber(divAve, 1, 1000, true) + "/s" 
 
             //calculate Corporate Fraud
             let fraudEarnings = ns.readPort(5)
@@ -117,20 +131,89 @@ export async function main(ns) {
                 }
                 fraudAve = ((fraudTotal / fraudArr.length) / (waitTimer / 1000))
             }
+            let reportCorpFraud = "CORP fraud    : $" + ns.formatNumber(fraudEPS, 1, 1000, true) + "/s | $" + ns.formatNumber(fraudAve, 1, 1000, true) + "/s"
+
+            // gather gang earnings
+            let gang = ns.peek(10);
+            let gangTotal = 0
+            if (gang == "NULL PORT DATA") {
+                gang = 0;
+            }
+            if (gangArr.length > elength) {
+                gangArr.shift()
+            }
+            gangArr.push(gang)
+            for (let e = 0; e < gangArr.length; e++) {
+                gangTotal = gangArr[e] + gangTotal
+            }
+            let gangAve = gangTotal / gangArr.length;
+            let reportGang = "GANG          : $" + ns.formatNumber(gang, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s" 
+
+            // calculate Share power
+            let sharePower = ns.readPort(9);
+            let shareArr = [];
+            let shareAve = 0
+            if (sharePower != "NULL PORT DATA") {
+                if (shareArr.length > elength) {
+                    shareArr.shift()
+                }
+                shareArr.push(sharePower)
+                let shareTotal = 0
+                for (s = 0; s < shareArr.length; s++) {
+                    shareTotal = shareTotal + shareArr[s]
+                }
+                shareAve = ((shareTotal / shareArr.length) / (waitTimer / 1000))
+            } else {
+                sharePower = 0
+            }
+            let reportShare = "SHARE         : " + ns.formatNumber(sharePower, 1, 1000, true) + "% | " + ns.formatNumber(shareAve, 1, 1000, true) + "%"
+
+            // Calc Karma
+            let karma =  ns.heart.break()
+            let karmaprogress = ( karma / -54000 ) * 100    
+            let reportKarma = "KARMA         : " + ns.formatNumber( karma, 1, 1000, true ) + " | Progress: " + ns.formatNumber( karmaprogress, 1, 1000 ) + "%"    
 
             // REPORT
             let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS
             let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve
             let time = getTime()
-            let earningsReport = time + " - SUCCESS! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins; TOTAL: " + ns.formatNumber(total30, 1, 1000, true) + "/s | " + ns.formatNumber(totalAve, 1, 1000, true) + "/s; HACK: " + ns.formatNumber(hackeps, 1, 1000, true) + "/s | " + ns.formatNumber(hackaveEarn, 1, 1000, true) + "/s; SELF: " + + ns.formatNumber(selfeps, 1, 1000, true) + "/s | " + ns.formatNumber(selfaveEarn, 1, 1000, true) + "/s; TRADING: " + ns.formatNumber(stockeps, 1, 1000, true) + "/s | " + ns.formatNumber(stockave, 1, 1000, true) + "/s; CORP dividends: " + ns.formatNumber(dividends, 1, 1000, true) + "/s | " + ns.formatNumber(divAve, 1, 1000, true) + "/s; CORP fraud: " + ns.formatNumber(fraudEPS, 1, 1000, true) + "/s | " + ns.formatNumber(fraudAve, 1, 1000, true) + "/s"
-
-            await ns.print(earningsReport)
+            let reportTime = time + " - INFO! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins"
+            let reportTotal =   "SUCCESS! TOTAL: $" + ns.formatNumber(total30, 1, 1000, true) + "/s | $" + ns.formatNumber(totalAve, 1, 1000, true) + "/s"
+            
+            await ns.print(reportTotal)
+            await ns.print(reportTime)
+            if (hackaveEarn > 0 ){
+                await ns.print(reportHack)
+            }
+            if (selfaveEarn > 0){
+                await ns.print(reportSelf)
+            }
+            if (ns.scriptRunning("stocks/trade.js","home")) {
+                await ns.print(reportTrade)
+            } else if (stockNumber > 0 ) {
+                await ns.print(reportTrade)
+            }
+            if (ns.corporation.hasCorporation()) {
+                if (divAve > 0){   
+                    await ns.print(reportCorpDiv)
+                }
+                if (fraudAve > 0) {
+                    await ns.print(reportCorpFraud)
+                }
+            }
+            if (gangAve > 0 ) {
+                await ns.print(reportGang)
+            }
+            if (shareAve > 0 ) {
+                await ns.print(reportShare)
+            }
+            if (karmaprogress > 0 && karmaprogress < 100) {
+                await ns.print(reportKarma)
+            }
             waitTimer = 0
         }
     }
 }
-
-
 
 function getTime() {
     const d = new Date();

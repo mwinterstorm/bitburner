@@ -5,8 +5,16 @@ export async function main(ns) {
 	ns.moveTail(85, 495)
 	ns.resizeTail(600, 300)
     while (true) {
+        await reportGang(ns)
         await tendCats(ns)
     }
+}
+
+async function reportGang(ns) {
+    let gang = ns.gang.getGangInformation() 
+    let eps = gang.moneyGainRate
+    await ns.clearPort(10);
+    await ns.tryWritePort(10, eps);
 }
 
 function getTime() {

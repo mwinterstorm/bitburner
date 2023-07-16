@@ -14,13 +14,13 @@ export async function main(ns) {
 		let time = getTime()
 		let report = time + " - Starting share.js with " + threads + " threads on " + server
 		await ns.print(report)
-		await ns.tryWritePort(8, report)
+		// await ns.tryWritePort(8, report)
 		await ns.spawn("hacks/share.js", threads, threads, server)
 	} else {
 		let time = getTime()
 		let report = time + "- FAIL! Not enough RAM for SHARE"
 		await ns.print(report)
-		await ns.tryWritePort(8, report)
+		// await ns.tryWritePort(8, report)
 
 	}
 }

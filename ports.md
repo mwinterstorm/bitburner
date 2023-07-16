@@ -1,10 +1,22 @@
+// REPORTING PORTS
 1. Earnings per second reporting
-2. Dividend reporting
-3. Not Used
-4. Not Used
-5. Not Used
-6. Default co-ordination data
-7. Co-ordination data
+2. Self Earnings per second reporting
+3. Earnings from stock trading per second reporting
+4. Dividend reporting
+5. Corporate fraud
+6. Stock value
+7. Number of stocks owned
 8. Reporting
-9. Not Used
-10. Not Used
+9. Share reporting - rep gain
+10. Gang reporting
+11. 
+12. 
+13. 
+14. 
+15. 
+16. 
+17. 
+18. 
+// COORDINATION PORTS
+19. Default co-ordination data
+20. Co-ordination data 

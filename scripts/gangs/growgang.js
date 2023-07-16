@@ -1,11 +1,19 @@
 export async function main(ns) {
     ns.disableLog("ALL");
     while (true) {
-        await establishGang(ns)
+        await reportGang(ns);
+        await establishGang(ns);
         await tendCats(ns);
         await ns.sleep(1000);
     }
 
+}
+
+async function reportGang(ns) {
+    let gang = ns.gang.getGangInformation() 
+    let eps = gang.moneyGainRate
+    await ns.clearPort(10);
+    await ns.tryWritePort(10, eps);
 }
 
 async function establishGang(ns) {

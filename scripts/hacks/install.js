@@ -83,7 +83,7 @@ export async function main(ns) {
 	time = getTime();
 	report = time + " - ...INSTALL complete."
 	ns.print(report)
-	await ns.tryWritePort(8, report)
+	// await ns.tryWritePort(8, report)
 }
 
 

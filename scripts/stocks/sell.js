@@ -70,9 +70,15 @@ function tendStocks(ns) {
 			++StockNumber
 		}
 	}
-	ns.print("SELLING: Remaining = $" + ns.formatNumber(overallValue, 4, 1000, true))
-	ns.print("SELLING: Value sold = $" + ns.formatNumber(TotalValue, 4, 1000, true))
-	ns.print("SELLING: Profit = $" + ns.formatNumber(TotalProfit, 4, 1000, true))
+	let reportRemain = "SELLING: Remaining = $" + ns.formatNumber(overallValue, 4, 1000, true)
+	let reportSold = "SELLING: Value sold = $" + ns.formatNumber(TotalValue, 4, 1000, true)
+	let reportProfit = "SELLING: Profit = $" + ns.formatNumber(TotalProfit, 4, 1000, true)
+	ns.print(reportRemain)
+	ns.tryWritePort(8, reportRemain)
+	ns.print(reportSold)
+	ns.tryWritePort(8, reportSold)
+	ns.print(reportProfit)
+	ns.tryWritePort(8, reportProfit)
 
 	if (StockNumber == 0) {
 		stocksExist = false

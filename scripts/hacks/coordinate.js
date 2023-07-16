@@ -19,14 +19,14 @@ export async function main(ns) {
 					}
 					if (highlimit > reqlev) {
 						if (Math.random() < (reqlev / lowlimit)) {
-							while (!ns.tryWritePort(7, servers[i])) {
+							while (!ns.tryWritePort(20, servers[i])) {
 								await ns.sleep(25)
 							}
-							ns.tryWritePort(6, servers[i])
+							ns.tryWritePort(19, servers[i])
 							ns.print("SUCCESS hack.js add: " + servers[i])
 						} else {
 							if (Math.random() < 0.1) {
-								while (!ns.tryWritePort(7, servers[i])) {
+								while (!ns.tryWritePort(20, servers[i])) {
 									await ns.sleep(25)
 								}
 								ns.print("SUCCESS hack.js add: " + servers[i])

@@ -55,10 +55,10 @@ function tendStocks(ns) {
                 let report = time + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
                 ns.tryWritePort(8, report)
-                let currentEarnings = ns.readPort(1);
+                let currentEarnings = ns.readPort(3);
                 if (currentEarnings != "NULL PORT DATA") {
                     let totalEarnings = currentEarnings + saleProfit
-                    ns.tryWritePort(1, totalEarnings)
+                    ns.tryWritePort(3, totalEarnings)
                 }
             }
         }
@@ -128,8 +128,10 @@ function tendStocks(ns) {
         let time = getTime()
         let report = time + " - INFO Stock value: " + ns.formatNumber(overallValue, 4, 1000, true) + " (" + numberStocks + " stocks)";
         ns.print(report);
-        ns.tryWritePort(8, report);
+        // ns.tryWritePort(8, report);
     };
+    ns.tryWritePort(6, overallValue);
+    ns.tryWritePort(7, numberStocks);
     if (overallValue < money) {
         tradeActive = true;
     } else {
