@@ -25,11 +25,11 @@ export async function main(ns) {
 
     // CORPORATION
     if (ns.corporation.hasCorporation()) {
-        await ns.tprint("Starting CORPORATE FRAUD...")
-        await ns.run("corp/fraudManager.js");
+        await ns.tprint("Starting CORPORATION CONTROLER...")
+        await ns.run("corp/corpControl.js");
         await ns.sleep(5000)  
     } else {
-        await ns.tprint("Skipping CORPORATE FRAUD, no Corporation Owned...")
+        await ns.tprint("Skipping CORPORATION CONTROLER, no Corporation Owned...")
         await ns.sleep(150) 
     }
 

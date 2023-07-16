@@ -4,7 +4,7 @@ export async function main(ns) {
     ns.tail();
     await ns.sleep(100);
     ns.moveTail(0, 0);
-    ns.resizeTail(850, 300);
+    ns.resizeTail(950, 300);
     var maxwait = 500;
     var waitTimer = 0
     const earningsReportPeriod = 30000 // in seconds * 1000

@@ -14,7 +14,9 @@ export async function main(ns) {
 				let error = time + " - FAIL Empty Coordination Data (retrying in " + retrysec + "s): " + host;
 				await ns.tryWritePort(8, error)
 				await ns.print(error)
-				await ns.sleep(retrysec * 1000);
+				if (Math.random() <= 0.1) {
+					await ns.sleep(retrysec * 1000);
+				}
 				retrysec = retrysec + 1;
 				target = ns.readPort(7);
 			} else {

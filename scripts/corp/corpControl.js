@@ -10,9 +10,8 @@ export async function main(ns) {
 
 async function tendProducts(ns) {
     let corporation = ns.corporation.getCorporation();
-    // ns.print(corporation);
     let divisionNames = corporation.divisions;
-    // ns.print(divisionNames);
+    const minDemand = 1;
 
     // Get divisons
     var div = [];
@@ -20,8 +19,8 @@ async function tendProducts(ns) {
         let divInfo = ns.corporation.getDivision(divisionNames[i]);
         div.push(divInfo)
     }
-    // ns.print(divisions)
 
+    // Get products and tend
     for (let i = 0; i < div.length; i++) {
         if (div[i].makesProducts) {
             let divName = div[i].name;
@@ -41,10 +40,12 @@ async function tendProducts(ns) {
                         if (ns.corporation.hasResearched(divName, "Market-TA.II")) {
                             await ns.corporation.setProductMarketTA2(divName, divProd, true)
                         }
+                    } else {
+                        aveDemand = aveDemand + (minDemand * 1024) //ensure products being developed are not discontinued
                     }
                 }
                 aveDemand = aveDemand / divcities.length
-                if (aveDemand <= 1) { //discontinue product with low demand 
+                if (aveDemand <= minDemand) { //discontinue product with low demand 
                     await ns.corporation.discontinueProduct(divName, divProd);
                     let index = divProds.indexOf(divProd);
                     divProds.splice(index, 1);
@@ -74,8 +75,8 @@ async function tendProducts(ns) {
 }
 
 async function commitInsiderTrading(ns) {
-    let cooldown = corporation.shareSaleCooldown
     let corporation = ns.corporation.getCorporation();
+    let cooldown = corporation.shareSaleCooldown
     let myShares = corporation.numShares;
     let salePrice = corporation.sharePrice;
     let saleShares = myShares - 1;
@@ -174,6 +175,10 @@ async function commitInsiderTrading(ns) {
         }
     }
 }
+
+// async function purchaseResearch(ns) {
+
+// }
 
 function getTime() {
     const d = new Date();

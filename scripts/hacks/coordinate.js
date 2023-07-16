@@ -20,13 +20,13 @@ export async function main(ns) {
 					if (highlimit > reqlev) {
 						if (Math.random() < (reqlev / lowlimit)) {
 							while (!ns.tryWritePort(7, servers[i])) {
-								await ns.sleep(100)
+								await ns.sleep(25)
 							}
 							ns.print("SUCCESS hack.js add: " + servers[i])
 						} else {
 							if (Math.random() < 0.1) {
 								while (!ns.tryWritePort(7, servers[i])) {
-									await ns.sleep(100)
+									await ns.sleep(25)
 								}
 								ns.print("SUCCESS hack.js add: " + servers[i])
 							} else {
@@ -40,7 +40,7 @@ export async function main(ns) {
 				} else {
 					ns.print("FAIL No Money: " + servers[i])
 				}
-				await ns.sleep(100)
+				await ns.sleep(25)
 			}
 			// then scan other servers and add
 			let nextservers = ns.scan(servers[i])
@@ -49,7 +49,7 @@ export async function main(ns) {
 					if (nextservers[n] != "home") {
 						if (nextservers[n].includes("markwr") == false) {
 							servers.push(nextservers[n])
-							await ns.sleep(75)
+							await ns.sleep(25)
 						}
 					}
 				}
