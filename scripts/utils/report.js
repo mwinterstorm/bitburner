@@ -119,7 +119,7 @@ export async function main(ns) {
                 funds = corpobj.funds
                 expenses = corpobj.expenses
                 revenue = corpobj.revenue
-                fraudCool = corpobj.saleCool / 600 //cooldown in minutes
+                fraudCool = corpobj.saleCool / 300 //cooldown in minutes
                 fraudPrice = corpobj.sharePrice
             }
             if (divArr.length > elength) {

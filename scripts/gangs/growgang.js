@@ -146,9 +146,9 @@ async function tendCats(ns) {
     } else {
         ascendTimer = 0
         let catSelect = Math.floor(Math.random() * cats.length);
-        ns.gang.ascendMember(cat[catSelect])
+        ns.gang.ascendMember(cats[catSelect])
         let time = getTime();
-        ns.print(time + " - SUCCESS Ascended " + cat[catSelect])
+        ns.print(time + " - SUCCESS Ascended " + cats[catSelect])
     }
 }
 
