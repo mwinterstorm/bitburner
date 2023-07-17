@@ -84,7 +84,7 @@ export async function main(ns) {
 	await ns.print(report)
 	await ns.tprint(report)
 	await ns.tryWritePort(8, report)
-
+	await ns.spawn("hacks/spawn.js", 1)
 }
 
 function getTime() {
