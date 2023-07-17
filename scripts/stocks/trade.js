@@ -13,9 +13,6 @@ var overallValue = 0;
 export async function main(ns) {
     ns.disableLog("ALL");
     // ns.tail();
-    // await ns.sleep(100);
-    // ns.moveTail(850, 0)
-    // ns.resizeTail(380, 300)
 
     while (true) {
         money = ns.getServerMoneyAvailable("home");
@@ -130,8 +127,13 @@ function tendStocks(ns) {
         ns.print(report);
         // ns.tryWritePort(8, report);
     };
-    ns.tryWritePort(6, overallValue);
-    ns.tryWritePort(7, numberStocks);
+    let stockInfo = {
+        "overallValue": +overallValue,
+        "numberStocks": +numberStocks
+    }
+    let string = JSON.stringify(stockInfo);
+    ns.clearPort(6);
+    ns.tryWritePort(6, string);
     if (overallValue < money) {
         tradeActive = true;
     } else {

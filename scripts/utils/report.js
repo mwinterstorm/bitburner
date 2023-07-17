@@ -53,7 +53,7 @@ export async function main(ns) {
                 }
                 hackaveEarn = ((totalEarn / earnArr.length) / (waitTimer / 1000))
             }
-            let reportHack = "HACK          : $" + ns.formatNumber(hackeps, 1, 1000, true) + "/s | $" + ns.formatNumber(hackaveEarn, 1, 1000, true) + "/s" 
+            let reportHack = "HACK          : $" + ns.formatNumber(hackeps, 1, 1000, true) + "/s | $" + ns.formatNumber(hackaveEarn, 1, 1000, true) + "/s"
 
             //calculate earnings from self.js
             let selfearnings = ns.readPort(2)
@@ -91,16 +91,18 @@ export async function main(ns) {
                 }
                 stockave = ((stocktotalearn / stockearArr.length) / (waitTimer / 1000))
             }
-            let stockValue = ns.readPort(6)
-            if (stockValue == "NULL PORT DATA") {
+            let stockobj = ns.peek(6)
+            let stockValue = 0
+            let stockNumber = 0
+            if (stockobj == "NULL PORT DATA") {
                 stockValue = 0
-            }
-            let stockNumber = ns.readPort(7)
-            if (stockNumber == "NULL PORT DATA") {
                 stockNumber = 0
+            } else {
+                stockobj = JSON.parse(stockobj)
+                stockValue = +stockobj.overallValue
+                stockNumber = +stockobj.numberStocks
             }
             let reportTrade = "TRADING       : $" + ns.formatNumber(stockeps, 1, 1000, true) + "/s | $" + ns.formatNumber(stockave, 1, 1000, true) + "/s; Total Value Owned: $" + ns.formatNumber(stockValue, 1, 1000, true) + " in " + ns.formatNumber(stockNumber, 0, 1000, true) + " stocks"
-
 
             // gather dividend EPS
             let dividends = ns.peek(4);
@@ -116,7 +118,7 @@ export async function main(ns) {
                 divTotal = divArr[e] + divTotal
             }
             let divAve = divTotal / divArr.length;
-            let reportCorpDiv = "CORP dividends: $" + ns.formatNumber(dividends, 1, 1000, true) + "/s | $" + ns.formatNumber(divAve, 1, 1000, true) + "/s" 
+            let reportCorpDiv = "CORP dividends: $" + ns.formatNumber(dividends, 1, 1000, true) + "/s | $" + ns.formatNumber(divAve, 1, 1000, true) + "/s"
 
             //calculate Corporate Fraud
             let fraudEarnings = ns.readPort(5)
@@ -151,7 +153,7 @@ export async function main(ns) {
                 gangTotal = gangArr[e] + gangTotal
             }
             let gangAve = gangTotal / gangArr.length;
-            let reportGang = "GANG          : $" + ns.formatNumber(gang, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s" 
+            let reportGang = "GANG          : $" + ns.formatNumber(gang, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s"
 
             // gather hacknet 
             let hacknet = ns.peek(11);
@@ -174,10 +176,10 @@ export async function main(ns) {
                 hacktotal = Number(hacknetArr[e]) + hacktotal
             }
             let hacknetAve = Number(hacktotal) / Number(hacknetArr.length);
-            let reportHackNet = "HACKNET       : $" + ns.formatNumber(+hacknetEPS, 1, 1000) + "/s | $" + ns.formatNumber(+hacknetAve, 1, 1000) + "/s; Profit: " + ns.formatPercent(hacknetProfitPercent,1) 
+            let reportHackNet = "HACKNET       : $" + ns.formatNumber(+hacknetEPS, 1, 1000) + "/s | $" + ns.formatNumber(+hacknetAve, 1, 1000) + "/s; Profit: " + ns.formatPercent(hacknetProfitPercent, 1)
 
             // calculate Share power
-            let sharePower = parseFloat(ns.readPort(9)) ;
+            let sharePower = parseFloat(ns.readPort(9));
             await ns.clearPort(9);
             let shareAve = 0
             if (sharePower != "NULL PORT DATA" && sharePower > 0) {
@@ -210,13 +212,13 @@ export async function main(ns) {
 
             // Calc Karma
             let karmaOld = karma
-            karma =  ns.heart.break()
+            karma = ns.heart.break()
             let karmaChange = (karma - karmaOld) / (waitTimer / 1000)
-            let karmaprogress = ( karma / -54000 )  
-            let reportKarma = ""  
+            let karmaprogress = (karma / -54000)
+            let reportKarma = ""
             let karmaTotal = 0
             let karmaAve = 0
-            if (karmaOld != 0 ) {
+            if (karmaOld != 0) {
                 if (karmaArr.length > elength) {
                     karmaArr.shift()
                 }
@@ -225,14 +227,14 @@ export async function main(ns) {
                     karmaTotal = karmaTotal + karmaArr[k]
                 }
                 karmaAve = karmaTotal / karmaArr.length
-                let karmaTime = ((54000 + karma) / (((-karmaChange * 2) + -karmaAve )/3))/60
+                let karmaTime = ((54000 + karma) / (((-karmaChange * 2) + -karmaAve) / 3)) / 60
                 if (karmaChange < 0) {
-                    reportKarma = "KARMA         : " + ns.formatNumber( karmaChange, 2, 1000, true ) + "/s | " + ns.formatNumber( karmaAve, 2, 1000, true ) + "/s; Progress: " + ns.formatPercent( karmaprogress, 1, 1000 ) + " | ETA: " + ns.formatNumber(karmaTime, 1,1000) + " mins"  
+                    reportKarma = "KARMA         : " + ns.formatNumber(karmaChange, 2, 1000, true) + "/s | " + ns.formatNumber(karmaAve, 2, 1000, true) + "/s; Progress: " + ns.formatPercent(karmaprogress, 1, 1000) + " | ETA: " + ns.formatNumber(karmaTime, 1, 1000) + " mins"
                 } else {
-                    reportKarma = "KARMA         : " + ns.formatNumber( karmaChange, 2, 1000, true ) + "/s | " + ns.formatNumber( karmaAve, 2, 1000, true ) + "/s; Progress: " + ns.formatPercent( karmaprogress, 1, 1000 )   
+                    reportKarma = "KARMA         : " + ns.formatNumber(karmaChange, 2, 1000, true) + "/s | " + ns.formatNumber(karmaAve, 2, 1000, true) + "/s; Progress: " + ns.formatPercent(karmaprogress, 1, 1000)
                 }
             } else {
-                reportKarma = "KARMA         : 0/s | " + ns.formatNumber( karma, 2, 1000, true ) + "; Progress: " + ns.formatPercent( karmaprogress, 1, 1000 )   
+                reportKarma = "KARMA         : 0/s | " + ns.formatNumber(karma, 2, 1000, true) + "; Progress: " + ns.formatPercent(karmaprogress, 1, 1000)
             }
 
             // REPORT
@@ -241,35 +243,35 @@ export async function main(ns) {
             let time = getTime()
             let reportTime = time + " - INFO! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins"
             let reportTotal = time + " - SUCCESS! TOTAL: $" + ns.formatNumber(total30, 1, 1000, true) + "/s | $" + ns.formatNumber(totalAve, 1, 1000, true) + "/s"
-            
+
             await ns.print(reportTotal)
             await ns.print(reportTime)
-            if (hackaveEarn > 0 ){
+            if (hackaveEarn > 0) {
                 await ns.print(reportHack)
             }
-            if (selfaveEarn > 0){
+            if (selfaveEarn > 0) {
                 await ns.print(reportSelf)
             }
             if (stockave > 0) {
                 await ns.print(reportTrade)
-            } else if (stockNumber > 0 ) {
+            } else if (stockNumber > 0) {
                 await ns.print(reportTrade)
             }
             if (ns.corporation.hasCorporation()) {
-                if (divAve > 0){   
+                if (divAve > 0) {
                     await ns.print(reportCorpDiv)
                 }
                 if (fraudAve > 0) {
                     await ns.print(reportCorpFraud)
                 }
             }
-            if (gangAve > 0 ) {
+            if (gangAve > 0) {
                 await ns.print(reportGang)
             }
-            if (hacknetAve > 0 ) {
+            if (hacknetAve > 0) {
                 await ns.print(reportHackNet)
             }
-            if (shareAve > 0 ) {
+            if (shareAve > 0) {
                 await ns.print(reportShare)
             }
             if (karmaprogress > 0 && karmaprogress < 1) {
