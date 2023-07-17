@@ -42,11 +42,14 @@ async function growNet(ns) {
     let numberServers = await ns.hacknet.numNodes()
     let hacknetEarnings = await ns.getMoneySources().sinceInstall.hacknet
     let hacknetCost = await -ns.getMoneySources().sinceInstall.hacknet_expenses
+    let hacknetProfit = hacknetEarnings - hacknetCost
     let money = await ns.getPlayer().money
     if (hacknetEarnings > (1.1 * hacknetCost)) {
-        if (numberServers < maxServers && Math.random() < 0.25) {
-            if (money > 100 * ns.hacknet.getPurchaseNodeCost())
-            await ns.hacknet.purchaseNode()
+        let newServerCost = ns.hacknet.getPurchaseNodeCost()
+        if (numberServers < maxServers && hacknetProfit > (1.1 * newServerCost)) {
+            if (money > 100 * newServerCost) {
+                await ns.hacknet.purchaseNode()
+            }
         } else {
             let randomServer = Math.floor(Math.random() * numberServers)
             let totalProduction = ns.hacknet.getNodeStats(randomServer)

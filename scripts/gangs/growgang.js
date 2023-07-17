@@ -16,7 +16,7 @@ async function reportGang(ns) {
     let eps = gang.moneyGainRate * 5
     let report = {
         "eps": eps,
-        "ascend":ascendTimer
+        "ascend": ascendTimer
     }
     let string = JSON.stringify(report) // need to edit report.js to send this properly
     await ns.clearPort(10);
@@ -126,12 +126,12 @@ async function tendCats(ns) {
     let infoPenalty = (1 - info.wantedPenalty) * 100;
     let infoChange = info.wantedLevelGainRate;
     if (infoPenalty > 66 && infoChange >= 0) {
-            //convert a random badcat to ethical
-            let catSelect = Math.floor(Math.random() * cats.length);
-            let justiceSelect = Math.floor(Math.random() * justice.length);
-            ns.gang.setMemberTask(cats[catSelect], justice[justiceSelect].name);
-            let time = getTime();
-            ns.print(time + " - " + cats[catSelect] + " is doing " + justice[justiceSelect].name);
+        //convert a random badcat to ethical
+        let catSelect = Math.floor(Math.random() * cats.length);
+        let justiceSelect = Math.floor(Math.random() * justice.length);
+        ns.gang.setMemberTask(cats[catSelect], justice[justiceSelect].name);
+        let time = getTime();
+        ns.print(time + " - " + cats[catSelect] + " is doing " + justice[justiceSelect].name);
     } else if (infoPenalty <= 5) {
         //convert a random cat to crime
         let catSelect = Math.floor(Math.random() * cats.length);
