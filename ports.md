@@ -4,12 +4,12 @@
 3. Earnings from stock trading per second reporting
 4. Dividend reporting
 5. Corporate fraud
-6. Stock value
-7. Number of stocks owned
-8. Reporting
+6. Stock value / Number of stocks owned (object)
+7. 
+8. GENERAL REPORTING
 9. Share reporting - rep gain
 10. Gang reporting
-11. hacknet reporting
+11. hacknet reporting (object)
 12. 
 13. 
 14. 

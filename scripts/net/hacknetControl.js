@@ -5,7 +5,7 @@ export async function main(ns) {
     let upgradecount = 0
     while (true) {
         let numberServers = await ns.hacknet.numNodes()
-        if (numberServers == 0) {
+        if (numberServers === 0) {
             await ns.hacknet.purchaseNode()
         }
         if (upgradecount >= upgradedelay) {
@@ -41,10 +41,10 @@ async function growNet(ns) {
     let maxServers = await ns.hacknet.maxNumNodes()
     let numberServers = await ns.hacknet.numNodes()
     let hacknetEarnings = await ns.getMoneySources().sinceInstall.hacknet
-    let hacknetCost = await ns.getMoneySources().sinceInstall.hacknet_expenses
+    let hacknetCost = await -ns.getMoneySources().sinceInstall.hacknet_expenses
     let money = await ns.getPlayer().money
     if (hacknetEarnings > (2 * hacknetCost)) {
-        if (numberServers < maxServers) {
+        if (numberServers < maxServers && hacknetEarnings > (3 * hacknetCost)) {
             await ns.hacknet.purchaseNode()
         } else {
             let randomServer = Math.floor(Math.random() * numberServers)
