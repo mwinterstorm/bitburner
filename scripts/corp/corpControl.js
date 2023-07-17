@@ -125,10 +125,10 @@ async function commitInsiderTrading(ns) {
 
         // Manipulate Market
         await ns.corporation.sellShares(saleShares);
-        corporation = ns.corporation.getCorporation();
+        corporation = await ns.corporation.getCorporation();
         let purchasePrice = corporation.sharePrice;
         await ns.corporation.buyBackShares(saleShares);
-        corporation = ns.corporation.getCorporation();
+        corporation = await ns.corporation.getCorporation();
         let finalShares = corporation.numShares;
         cooldown = (corporation.shareSaleCooldown * 10) + 10000;
 

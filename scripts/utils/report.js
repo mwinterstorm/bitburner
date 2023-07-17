@@ -3,18 +3,21 @@ export async function main(ns) {
     ns.disableLog("ALL");
     ns.tail();
     await ns.sleep(100);
-    ns.moveTail(0, 0);
-    ns.resizeTail(950, 300);
+    ns.moveTail(500, 0);
+    ns.resizeTail(725, 470);
     var maxwait = 500;
     var waitTimer = 0
     const earningsReportPeriod = 30000 // in seconds * 1000
-    const aveEarnPeriod = 33 // in minutes
+    const aveEarnPeriod = 60 // in minutes
     var earnArr = [];
     var selfearnArr = [];
     var stockearArr = [];
     var divArr = [];
     var fraudArr = [];
     var gangArr = [];
+    let shareArr = [];
+    let karmaArr = [];
+    var karma = 0 //to allow calculating change
     while (true) {
         let wait = Math.floor(Math.random() * maxwait);
         if (wait < 25) {
@@ -53,11 +56,11 @@ export async function main(ns) {
 
             //calculate earnings from self.js
             let selfearnings = ns.readPort(2)
+            await ns.tryWritePort(2, 0)
             let selfeps = 0;
             let selfaveEarn = 0;
-            await ns.tryWritePort(2, 0)
             if (selfearnings != "NULL PORT DATA") {
-                selfeps = (selfearnings / (waitTimer / 1000))
+                selfeps = (selfearnings * 1000 / (waitTimer / 1000)) / 1000
                 let selftotalEarn = 0
                 if (selfearnArr.length > elength) {
                     selfearnArr.shift()
@@ -68,7 +71,7 @@ export async function main(ns) {
                 }
                 selfaveEarn = ((selftotalEarn / selfearnArr.length) / (waitTimer / 1000))
             }
-            let reportSelf = "SELF          : $" + + ns.formatNumber(selfeps, 1, 1000, true) + "/s | $" + ns.formatNumber(selfaveEarn, 1, 1000, true) + "/s"
+            let reportSelf = "SELF          : $" + + ns.formatNumber(parseInt(selfeps), 1, 1000) + "/s | $" + ns.formatNumber(selfaveEarn, 1, 1000) + "/s"
 
             //calculate stock market EPS
             let stockearnings = ns.readPort(3)
@@ -150,35 +153,70 @@ export async function main(ns) {
             let reportGang = "GANG          : $" + ns.formatNumber(gang, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s" 
 
             // calculate Share power
-            let sharePower = ns.readPort(9);
-            let shareArr = [];
+            let sharePower = parseFloat(ns.readPort(9)) ;
+            await ns.clearPort(9);
             let shareAve = 0
-            if (sharePower != "NULL PORT DATA") {
+            if (sharePower != "NULL PORT DATA" && sharePower > 0) {
                 if (shareArr.length > elength) {
                     shareArr.shift()
                 }
                 shareArr.push(sharePower)
                 let shareTotal = 0
-                for (s = 0; s < shareArr.length; s++) {
+                for (let s = 0; s < shareArr.length; s++) {
                     shareTotal = shareTotal + shareArr[s]
                 }
-                shareAve = ((shareTotal / shareArr.length) / (waitTimer / 1000))
+                shareAve = (shareTotal / shareArr.length)
             } else {
                 sharePower = 0
+                if (shareArr.length > elength) {
+                    shareArr.shift()
+                }
+                shareArr.push(sharePower)
+                if (shareArr.length >= 1) {
+                    let shareTotal = 0
+                    for (let s = 0; s < shareArr.length; s++) {
+                        shareTotal = shareTotal + shareArr[s]
+                    }
+                    shareAve = (shareTotal / shareArr.length)
+                } else {
+                    shareAve = 0
+                }
             }
-            let reportShare = "SHARE         : " + ns.formatNumber(sharePower, 1, 1000, true) + "% | " + ns.formatNumber(shareAve, 1, 1000, true) + "%"
+            let reportShare = "SHARE         : " + ns.formatPercent(sharePower, 1) + " | " + ns.formatPercent(shareAve, 1)
 
             // Calc Karma
-            let karma =  ns.heart.break()
-            let karmaprogress = ( karma / -54000 ) * 100    
-            let reportKarma = "KARMA         : " + ns.formatNumber( karma, 1, 1000, true ) + " | Progress: " + ns.formatNumber( karmaprogress, 1, 1000 ) + "%"    
+            let karmaOld = karma
+            karma =  ns.heart.break()
+            let karmaChange = (karma - karmaOld) / (waitTimer / 1000)
+            let karmaprogress = ( karma / -54000 )  
+            let reportKarma = ""  
+            let karmaTotal = 0
+            let karmaAve = 0
+            if (karmaOld != 0 ) {
+                if (karmaArr.length > elength) {
+                    karmaArr.shift()
+                }
+                karmaArr.push(karmaChange)
+                for (let k = 0; k < karmaArr.length; k++) {
+                    karmaTotal = karmaTotal + karmaArr[k]
+                }
+                karmaAve = karmaTotal / karmaArr.length
+                let karmaTime = ((54000 + karma) / (((-karmaChange * 2) + -karmaAve )/3))/60
+                if (karmaChange < 0) {
+                    reportKarma = "KARMA         : " + ns.formatNumber( karmaChange, 2, 1000, true ) + "/s | " + ns.formatNumber( karmaAve, 2, 1000, true ) + "/s; Progress: " + ns.formatPercent( karmaprogress, 1, 1000 ) + " | ETA: " + ns.formatNumber(karmaTime, 1,1000) + " mins"  
+                } else {
+                    reportKarma = "KARMA         : " + ns.formatNumber( karmaChange, 2, 1000, true ) + "/s | " + ns.formatNumber( karmaAve, 2, 1000, true ) + "/s; Progress: " + ns.formatPercent( karmaprogress, 1, 1000 )   
+                }
+            } else {
+                reportKarma = "KARMA         : 0/s | " + ns.formatNumber( karma, 2, 1000, true ) + "; Progress: " + ns.formatPercent( karmaprogress, 1, 1000 )   
+            }
 
             // REPORT
             let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS
             let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve
             let time = getTime()
             let reportTime = time + " - INFO! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins"
-            let reportTotal =   "SUCCESS! TOTAL: $" + ns.formatNumber(total30, 1, 1000, true) + "/s | $" + ns.formatNumber(totalAve, 1, 1000, true) + "/s"
+            let reportTotal = time + " - SUCCESS! TOTAL: $" + ns.formatNumber(total30, 1, 1000, true) + "/s | $" + ns.formatNumber(totalAve, 1, 1000, true) + "/s"
             
             await ns.print(reportTotal)
             await ns.print(reportTime)
@@ -188,7 +226,7 @@ export async function main(ns) {
             if (selfaveEarn > 0){
                 await ns.print(reportSelf)
             }
-            if (ns.scriptRunning("stocks/trade.js","home")) {
+            if (stockave > 0) {
                 await ns.print(reportTrade)
             } else if (stockNumber > 0 ) {
                 await ns.print(reportTrade)

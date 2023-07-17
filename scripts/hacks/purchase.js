@@ -14,14 +14,14 @@ export async function main(ns) {
 		let i = ns.getPurchasedServers().length;
 		while (i < numberServers) {
 			let time = getTime()
-			let report = time + " - Purchasing: markwr-" + i + "... $" + ns.formatNumber(ns.getPurchasedServerCost(ram), 0) + " for " + ram + " ram";
+			let report = time + " - Purchasing: markwr-" + i + "... $" + ns.formatNumber(ns.getPurchasedServerCost(ram), 0) + " for " + ns.formatRam(ram,3) + " ram";
 			await ns.print(report)
 			if (ns.getServerMoneyAvailable("home") > ns.getPurchasedServerCost(ram)) {
 				let hostname = ns.purchaseServer("markwr-" + i, ram);
 				ns.scp(files, hostname);
 				await ns.exec("hacks/spawn.js", hostname);
 				let time = getTime();
-				let report = time + " - SUCCESS Purchased: " + hostname + " with " + ram + "GB RAM"
+				let report = time + " - SUCCESS Purchased: " + hostname + " with " + ns.formatRam(ram,3) + " RAM"
 				await ns.print(report)
 				await ns.tryWritePort(8, report) 
 				++i;
@@ -51,12 +51,12 @@ export async function main(ns) {
                     let cost1 = ns.formatNumber(cost, 4, 1000, true);
                     let cost2 = ns.formatNumber(2 * cost, 4,1000,true);
 					let time = getTime();
-					let report = time + " - INFO $" + cost1 + " ($" + (cost2) + ") to upgrade " + hostname + " to " + ram + "GB ram.";
+					let report = time + " - INFO $" + cost1 + " ($" + (cost2) + ") to upgrade " + hostname + " to " + ns.formatRam(ram,3) + " ram.";
 					await ns.print(report)
 					if (ns.getServerMoneyAvailable("home") > (2 * ns.getPurchasedServerUpgradeCost(hostname, ram))) {
 						await ns.upgradePurchasedServer(hostname, ram)
 						let time = getTime()
-						let report = time + " - SUCCESS Upgraded " + hostname + " to " + ram + "GB RAM"
+						let report = time + " - SUCCESS Upgraded " + hostname + " to " + ns.formatRam(ram,3) + " RAM"
 						await ns.print(report)
 						await ns.tryWritePort(8, report)
 						await ns.scriptKill("hacks/hack.js", hostname)

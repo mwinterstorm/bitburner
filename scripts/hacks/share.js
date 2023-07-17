@@ -11,6 +11,7 @@ export async function main(ns) {
         if (Math.random() > 0.95) {
             // ns.tryWritePort(8, report)
         }
+        await ns.clearPort(9);
         ns.tryWritePort(9, sharePower)
     }
 }

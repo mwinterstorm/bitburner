@@ -3,11 +3,13 @@ export async function main(ns) {
 	ns.disableLog("ALL");
 	ns.tail();
 	await ns.sleep(100);
-	ns.moveTail(85, 495)
+	ns.moveTail(385, 295)
 	ns.resizeTail(600, 300)
+	let args = ns.args[0];
 	let host = "home";
 	var servers = ns.scan(host);
 	var target = ["run4theh111z", "I.I.I.I", "avmnite-02h", "CSEC", "The-Cave"];
+	target.unshift(args);
 	await ns.sleep(1000)
 	await setuppass(ns)
 	for (let t = 0; t < target.length; t++) {

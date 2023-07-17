@@ -12,7 +12,7 @@ export async function main(ns) {
 			if (defaultTargets.length == 0) {
 				let time = getTime()
 				let error = time + " - FAIL Empty Coordination Data (retrying in " + retrysec + "s): " + host;
-				await ns.tryWritePort(8, error)
+				// await ns.tryWritePort(8, error)
 				await ns.print(error)
 				await ns.sleep(retrysec * 1000);
 				retrysec = retrysec + 1;

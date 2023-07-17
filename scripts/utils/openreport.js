@@ -10,8 +10,8 @@ export async function main(ns) {
         }
         ns.tail("utils/report.js","home")
         await ns.sleep(100);
-        ns.moveTail(0, 0, pid);
-        ns.resizeTail(950, 300, pid);
+        ns.moveTail(500, 0, pid);
+        ns.resizeTail(725, 470, pid);
     } else {
         await ns.run("utils/report.js");
     }
