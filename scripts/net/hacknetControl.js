@@ -1,7 +1,7 @@
 /** @param {NS} ns */
 export async function main(ns) {
     // ns.tail()
-    const upgradedelay = 2
+    const upgradedelay = 1
     let upgradecount = 0
     while (true) {
         let numberServers = await ns.hacknet.numNodes()
