@@ -55,6 +55,7 @@ My Bitburner Scripts
 - purchases servers and upgrades them
 - started by AUTOSTART
 - will exit when all purcased servers upgraded
+- can run with command *purchase* (after setting aliases)
 - $$$ Spends money $$$
 ### REP
 - hacks/rep.js
