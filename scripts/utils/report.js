@@ -105,10 +105,22 @@ export async function main(ns) {
             let reportTrade = "TRADING       : $" + ns.formatNumber(stockeps, 1, 1000, true) + "/s | $" + ns.formatNumber(stockave, 1, 1000, true) + "/s; Total Value Owned: $" + ns.formatNumber(stockValue, 1, 1000, true) + " in " + ns.formatNumber(stockNumber, 0, 1000, true) + " stocks"
 
             // gather dividend EPS
-            let dividends = ns.peek(4);
+            let corpobj = ns.peek(4);
+            let dividends = 0
+            let funds = 0
+            let expenses = 0
+            let revenue = 0
             let divTotal = 0
-            if (dividends == "NULL PORT DATA") {
-                dividends = 0;
+            let fraudCool = 0 //used with corporate fraud below
+            let fraudPrice = 0 //used with corporate fraud below
+            if (corpobj != "NULL PORT DATA") {
+                corpobj = JSON.parse(corpobj)
+                dividends =corpobj.dividends
+                funds = corpobj.funds
+                expenses = corpobj.expenses
+                revenue = corpobj.revenue
+                fraudCool = corpobj.saleCool / 600 //cooldown in minutes
+                fraudPrice = corpobj.sharePrice
             }
             if (divArr.length > elength) {
                 divArr.shift()
@@ -118,7 +130,7 @@ export async function main(ns) {
                 divTotal = divArr[e] + divTotal
             }
             let divAve = divTotal / divArr.length;
-            let reportCorpDiv = "CORP dividends: $" + ns.formatNumber(dividends, 1, 1000, true) + "/s | $" + ns.formatNumber(divAve, 1, 1000, true) + "/s"
+            let reportCorpDiv = "CORP dividends: $" + ns.formatNumber(dividends, 1, 1000, true) + "/s | $" + ns.formatNumber(divAve, 1, 1000, true) + "/s; Income: $" + ns.formatNumber(revenue - expenses, 1, 1000, true) + " | Funds: $" + ns.formatNumber(funds, 1, 1000, true)
 
             //calculate Corporate Fraud
             let fraudEarnings = ns.readPort(5)
@@ -137,7 +149,7 @@ export async function main(ns) {
                 }
                 fraudAve = ((fraudTotal / fraudArr.length) / (waitTimer / 1000))
             }
-            let reportCorpFraud = "CORP fraud    : $" + ns.formatNumber(fraudEPS, 1, 1000, true) + "/s | $" + ns.formatNumber(fraudAve, 1, 1000, true) + "/s"
+            let reportCorpFraud = "CORP fraud    : $" + ns.formatNumber(fraudEPS, 1, 1000, true) + "/s | $" + ns.formatNumber(fraudAve, 1, 1000, true) + "/s; Price: $" + ns.formatNumber(fraudPrice, 1, 1000, true) + " | Cooldown: " + ns.formatNumber(fraudCool, 1, 1000) + "mins"
 
             // gather gang earnings
             let gang = ns.peek(10);

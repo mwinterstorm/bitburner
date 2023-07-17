@@ -19,8 +19,22 @@ async function reportDividends(ns) {
     let corporation = ns.corporation.getCorporation();    
     // Dividends for reporting
     let dividends = corporation.dividendEarnings
+    let funds = corporation.funds
+    let revenue = corporation.revenue
+    let expenses = corporation.expenses
+    let saleCool = corporation.shareSaleCooldown
+    let sharePrice = corporation.sharePrice
+    let obj = {
+        "dividends": dividends,
+        "funds": funds,
+        "revenue": revenue,
+        "expenses": expenses,
+        "saleCool": saleCool,
+        "sharePrice": sharePrice
+    }
+    let string = JSON.stringify(obj);
     await ns.clearPort(4);
-    await ns.tryWritePort(4, dividends);
+    await ns.tryWritePort(4, string);
 }
 
 async function tendProducts(ns) {

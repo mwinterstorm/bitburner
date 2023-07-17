@@ -1,7 +1,7 @@
 /** @param {NS} ns */
 export async function main(ns) {
     // ns.tail()
-    const upgradedelay = 10
+    const upgradedelay = 2
     let upgradecount = 0
     while (true) {
         let numberServers = await ns.hacknet.numNodes()
@@ -44,24 +44,25 @@ async function growNet(ns) {
     let hacknetCost = await -ns.getMoneySources().sinceInstall.hacknet_expenses
     let money = await ns.getPlayer().money
     if (hacknetEarnings > (2 * hacknetCost)) {
-        if (numberServers < maxServers && hacknetEarnings > (3 * hacknetCost)) {
+        if (numberServers < maxServers && Math.random() < 0.5) {
+            if (money > 100 * ns.hacknet.getPurchaseNodeCost())
             await ns.hacknet.purchaseNode()
         } else {
             let randomServer = Math.floor(Math.random() * numberServers)
             let randomiseUpgrade = Math.random()
-            if (randomiseUpgrade < 0.2) {
+            if (randomiseUpgrade < 0.1) {
                 let cost = await ns.hacknet.getCoreUpgradeCost(randomServer)
-                if (money >= 2 * cost) {
+                if (money >= 100 * cost) {
                     await ns.hacknet.upgradeCore(randomServer)
                 }
-            } else if (randomiseUpgrade < .5) {
+            } else if (randomiseUpgrade < .35) {
                 let cost = await ns.hacknet.getRamUpgradeCost(randomServer)
-                if (money >= 2 * cost) {
+                if (money >= 100 * cost) {
                     await ns.hacknet.upgradeRam(randomServer)
                 }
             } else {
                 let cost = await ns.hacknet.getLevelUpgradeCost(randomServer)
-                if (money >= 2 * cost) {
+                if (money >= 100 * cost) {
                     await ns.hacknet.upgradeLevel(randomServer)
                 }
             }

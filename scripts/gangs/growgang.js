@@ -6,14 +6,19 @@ export async function main(ns) {
         await reportGang(ns);
         await establishGang(ns);
         await tendCats(ns);
-        await ns.sleep(1000);
+        await ns.sleep(30000);
     }
 
 }
 
 async function reportGang(ns) {
     let gang = await ns.gang.getGangInformation()
-    let eps = gang.moneyGainRate
+    let eps = gang.moneyGainRate * 5
+    let report = {
+        "eps": eps,
+        "ascend":ascendTimer
+    }
+    let string = JSON.stringify(report) // need to edit report.js to send this properly
     await ns.clearPort(10);
     await ns.tryWritePort(10, eps);
 }
@@ -84,7 +89,7 @@ async function establishGang(ns) {
                         } else {
                             tasks.splice[0, 1]
                         }
-                        await ns.sleep(500);
+                        await ns.sleep(100);
                     };
                 };
             }
@@ -120,18 +125,13 @@ async function tendCats(ns) {
     let info = ns.gang.getGangInformation();
     let infoPenalty = (1 - info.wantedPenalty) * 100;
     let infoChange = info.wantedLevelGainRate;
-    if (infoPenalty > 80) {
-        while (infoChange >= 0) {
+    if (infoPenalty > 66 && infoChange >= 0) {
             //convert a random badcat to ethical
             let catSelect = Math.floor(Math.random() * cats.length);
             let justiceSelect = Math.floor(Math.random() * justice.length);
             ns.gang.setMemberTask(cats[catSelect], justice[justiceSelect].name);
             let time = getTime();
             ns.print(time + " - " + cats[catSelect] + " is doing " + justice[justiceSelect].name);
-            let waitPause = Math.random() * 120000
-            ns.print("Waiting after justice: " + Math.floor(waitPause / 1000) + " seconds")
-            await ns.sleep(waitPause)
-        }
     } else if (infoPenalty <= 5) {
         //convert a random cat to crime
         let catSelect = Math.floor(Math.random() * cats.length);
@@ -145,15 +145,11 @@ async function tendCats(ns) {
         ascendTimer = ascendTimer + (Math.floor(Math.random() * cats.length))
     } else {
         ascendTimer = 0
-        let catSelect = Math.floor(Math.random() * cat.length);
+        let catSelect = Math.floor(Math.random() * cats.length);
         ns.gang.ascendMember(cat[catSelect])
         let time = getTime();
         ns.print(time + " - SUCCESS Ascended " + cat[catSelect])
     }
-    let waitPause = Math.random() * 120000
-    ns.print("Waiting: " + Math.floor(waitPause / 1000) + " seconds / " + ns.formatNumber((ascendTimer / 1800) * 100, 4, 100, true) + "% to ascension")
-    await ns.sleep(waitPause)
-
 }
 
 function getTime() {
