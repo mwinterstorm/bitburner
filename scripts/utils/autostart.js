@@ -59,6 +59,11 @@ export async function main(ns) {
     }
     await ns.sleep(500)
 
+    // HACKNET CONTROL
+    await ns.tprint("Starting HACKNET...")
+    await ns.run("hacknet/hacknetControl.js");
+    await ns.sleep(4000)
+
     // START SERVER SCRIPTS
     await ns.tprint("Restarting HACKING on DATACENTRE and HOME...")
     await ns.run("hacks/restart.js");

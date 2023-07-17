@@ -17,6 +17,7 @@ export async function main(ns) {
     var gangArr = [];
     let shareArr = [];
     let karmaArr = [];
+    let hacknetArr = [];
     var karma = 0 //to allow calculating change
     while (true) {
         let wait = Math.floor(Math.random() * maxwait);
@@ -152,6 +153,22 @@ export async function main(ns) {
             let gangAve = gangTotal / gangArr.length;
             let reportGang = "GANG          : $" + ns.formatNumber(gang, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s" 
 
+            // gather hacknet 
+            let hacknet = ns.peek(11);
+            let hacktotal = 0
+            if (hacknet == "NULL PORT DATA") {
+                hacknet = 0;
+            }
+            if (hacknetArr.length > elength) {
+                hacknetArr.shift()
+            }
+            hacknetArr.push(hacknet)
+            for (let e = 0; e < hacknetArr.length; e++) {
+                hacktotal = hacknetArr[e] + hacktotal
+            }
+            let hacknetAve = hacktotal / hacknetArr.length;
+            let reportHackNet = "HACKNET       : $" + ns.formatNumber(hacknet, 1, 1000, true) + "/s | $" + ns.formatNumber(hacknetAve, 1, 1000, true) + "/s" 
+
             // calculate Share power
             let sharePower = parseFloat(ns.readPort(9)) ;
             await ns.clearPort(9);
@@ -212,8 +229,8 @@ export async function main(ns) {
             }
 
             // REPORT
-            let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS
-            let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve
+            let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS + hacknet
+            let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve + hacknetAve
             let time = getTime()
             let reportTime = time + " - INFO! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins"
             let reportTotal = time + " - SUCCESS! TOTAL: $" + ns.formatNumber(total30, 1, 1000, true) + "/s | $" + ns.formatNumber(totalAve, 1, 1000, true) + "/s"
@@ -241,6 +258,9 @@ export async function main(ns) {
             }
             if (gangAve > 0 ) {
                 await ns.print(reportGang)
+            }
+            if (hacknetAve > 0 ) {
+                await ns.print(reportHackNet)
             }
             if (shareAve > 0 ) {
                 await ns.print(reportShare)
