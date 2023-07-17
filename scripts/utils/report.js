@@ -156,19 +156,25 @@ export async function main(ns) {
             // gather hacknet 
             let hacknet = ns.peek(11);
             let hacktotal = 0
+            let hacknetEPS = 0
+            let hacknetProfitPercent = 0
             if (hacknet == "NULL PORT DATA") {
-                hacknet = 0;
+                hacknetEPS = 0;
+                hacknetProfitPercent = -1
+            } else {
+                hacknet = JSON.parse(hacknet)
+                hacknetEPS = hacknet.totalEPS
+                hacknetProfitPercent = (hacknet.totalEarnings / hacknet.totalCost) - 1
             }
             if (hacknetArr.length > elength) {
                 hacknetArr.shift()
             }
-            hacknetArr.push(hacknet)
+            hacknetArr.push(hacknetEPS)
             for (let e = 0; e < hacknetArr.length; e++) {
-                hacktotal = hacknetArr[e] + hacktotal
+                hacktotal = Number(hacknetArr[e]) + hacktotal
             }
-            let hacknetAve = hacktotal / hacknetArr.length;
-            let hacknetProfit = ns.peek(12)
-            let reportHackNet = "HACKNET       : $" + ns.formatNumber(hacknet, 1, 1000, true) + "/s | $" + ns.formatNumber(hacknetAve, 1, 1000, true) + "/s; Profit: " + ns.formatPercent(hacknetProfit,1) 
+            let hacknetAve = Number(hacktotal) / Number(hacknetArr.length);
+            let reportHackNet = "HACKNET       : $" + ns.formatNumber(+hacknetEPS, 1, 1000) + "/s | $" + ns.formatNumber(+hacknetAve, 1, 1000) + "/s; Profit: " + ns.formatPercent(hacknetProfitPercent,1) 
 
             // calculate Share power
             let sharePower = parseFloat(ns.readPort(9)) ;
@@ -266,7 +272,7 @@ export async function main(ns) {
             if (shareAve > 0 ) {
                 await ns.print(reportShare)
             }
-            if (karmaprogress > 0 && karmaprogress < 100) {
+            if (karmaprogress > 0 && karmaprogress < 1) {
                 await ns.print(reportKarma)
             }
             waitTimer = 0

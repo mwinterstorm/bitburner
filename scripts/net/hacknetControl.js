@@ -4,7 +4,7 @@ export async function main(ns) {
     const upgradedelay = 10
     let upgradecount = 0
     while (true) {
-        let numberServers = ns.hacknet.numNodes()
+        let numberServers = await ns.hacknet.numNodes()
         if (numberServers == 0) {
             await ns.hacknet.purchaseNode()
         }
@@ -20,45 +20,49 @@ export async function main(ns) {
 }
 
 async function reporting(ns) {
-    let number = ns.hacknet.numNodes()
+    let number = await ns.hacknet.numNodes()
     let totalProd = 0
     for (let i = 0; i < number; i++) {
-        let node = ns.hacknet.getNodeStats(i)
+        let node = await ns.hacknet.getNodeStats(i)
         totalProd = totalProd + node.production
     }
+    let report = {
+        "totalEPS": totalProd,
+        "totalEarnings": +ns.getMoneySources().sinceInstall.hacknet,
+        "totalCost": -ns.getMoneySources().sinceInstall.hacknet_expenses
+    }
+    let string = JSON.stringify(report);
     await ns.clearPort(11);
-    await ns.tryWritePort(11, totalProd);
-    let hacknetprofit = (ns.getMoneySources().sinceInstall.hacknet / -ns.getMoneySources().sinceInstall.hacknet_expenses) - 1
-    await ns.clearPort(12);
-    await ns.tryWritePort(12, hacknetprofit);
+    await ns.tryWritePort(11, string);
+
 }
 
 async function growNet(ns) {
-    let maxServers = ns.hacknet.maxNumNodes()
-    let numberServers = ns.hacknet.numNodes()
-    let hacknetEarnings = ns.getMoneySources().sinceInstall.hacknet
-    let hacknetCost = ns.getMoneySources().sinceInstall.hacknet_expenses
-    let money = ns.getPlayer().money
+    let maxServers = await ns.hacknet.maxNumNodes()
+    let numberServers = await ns.hacknet.numNodes()
+    let hacknetEarnings = await ns.getMoneySources().sinceInstall.hacknet
+    let hacknetCost = await ns.getMoneySources().sinceInstall.hacknet_expenses
+    let money = await ns.getPlayer().money
     if (hacknetEarnings > (2 * hacknetCost)) {
         if (numberServers < maxServers) {
-            ns.hacknet.purchaseNode()
+            await ns.hacknet.purchaseNode()
         } else {
             let randomServer = Math.floor(Math.random() * numberServers)
             let randomiseUpgrade = Math.random()
             if (randomiseUpgrade < 0.2) {
-                let cost = ns.hacknet.getCoreUpgradeCost(randomServer)
+                let cost = await ns.hacknet.getCoreUpgradeCost(randomServer)
                 if (money >= 2 * cost) {
-                    ns.hacknet.upgradeCore(randomServer)
+                    await ns.hacknet.upgradeCore(randomServer)
                 }
             } else if (randomiseUpgrade < .5) {
-                let cost = ns.hacknet.getRamUpgradeCost(randomServer)
+                let cost = await ns.hacknet.getRamUpgradeCost(randomServer)
                 if (money >= 2 * cost) {
-                    ns.hacknet.upgradeRam(randomServer)
+                    await ns.hacknet.upgradeRam(randomServer)
                 }
             } else {
-                let cost = ns.hacknet.getLevelUpgradeCost(randomServer)
+                let cost = await ns.hacknet.getLevelUpgradeCost(randomServer)
                 if (money >= 2 * cost) {
-                    ns.hacknet.upgradeLevel(randomServer)
+                    await ns.hacknet.upgradeLevel(randomServer)
                 }
             }
         }

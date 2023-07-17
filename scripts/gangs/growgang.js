@@ -10,7 +10,7 @@ export async function main(ns) {
 }
 
 async function reportGang(ns) {
-    let gang = ns.gang.getGangInformation() 
+    let gang = await ns.gang.getGangInformation() 
     let eps = gang.moneyGainRate
     await ns.clearPort(10);
     await ns.tryWritePort(10, eps);
@@ -76,7 +76,7 @@ async function establishGang(ns) {
                     });
                     while (ns.gang.getMemberInformation(cats[cat]).task != tasks[0]) {
                         if (tasks[0].baseMoney * tasks[0].baseRespect > 0) {
-                            ns.gang.setMemberTask(cats[cat], tasks[0]);
+                            ns.gang.setMemberTask(cats[cat], tasks[0].name);
                             let time = getTime();
                             ns.print(time + " - " + cats[cat] + " is doing " + tasks[0]);
                         } else {

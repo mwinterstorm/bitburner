@@ -10,7 +10,7 @@
 9. Share reporting - rep gain
 10. Gang reporting
 11. hacknet reporting
-12. hacknet profit v cost reporting
+12. 
 13. 
 14. 
 15. 

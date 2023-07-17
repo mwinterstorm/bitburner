@@ -61,7 +61,7 @@ export async function main(ns) {
 
     // HACKNET CONTROL
     await ns.tprint("Starting HACKNET...")
-    await ns.run("hacknet/hacknetControl.js");
+    await ns.run("net/hacknetControl.js");
     await ns.sleep(4000)
 
     // START SERVER SCRIPTS
