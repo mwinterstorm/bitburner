@@ -167,7 +167,8 @@ export async function main(ns) {
                 hacktotal = hacknetArr[e] + hacktotal
             }
             let hacknetAve = hacktotal / hacknetArr.length;
-            let reportHackNet = "HACKNET       : $" + ns.formatNumber(hacknet, 1, 1000, true) + "/s | $" + ns.formatNumber(hacknetAve, 1, 1000, true) + "/s" 
+            let hacknetProfit = ns.peek(12)
+            let reportHackNet = "HACKNET       : $" + ns.formatNumber(hacknet, 1, 1000, true) + "/s | $" + ns.formatNumber(hacknetAve, 1, 1000, true) + "/s; Profit: " + ns.formatPercent(hacknetProfit,1) 
 
             // calculate Share power
             let sharePower = parseFloat(ns.readPort(9)) ;

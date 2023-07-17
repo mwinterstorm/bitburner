@@ -1,6 +1,6 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    ns.tail()
+    // ns.tail()
     const upgradedelay = 10
     let upgradecount = 0
     while (true) {
@@ -28,6 +28,9 @@ async function reporting(ns) {
     }
     await ns.clearPort(11);
     await ns.tryWritePort(11, totalProd);
+    let hacknetprofit = (ns.getMoneySources().sinceInstall.hacknet / -ns.getMoneySources().sinceInstall.hacknet_expenses) - 1
+    await ns.clearPort(12);
+    await ns.tryWritePort(12, hacknetprofit);
 }
 
 async function growNet(ns) {
