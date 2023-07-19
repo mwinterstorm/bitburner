@@ -1,21 +1,14 @@
 /** @param {NS} ns */
 export async function main(ns) {
     // ns.tail()
-    const upgradedelay = 1
-    let upgradecount = 0
     while (true) {
         let numberServers = await ns.hacknet.numNodes()
         if (numberServers === 0) {
             await ns.hacknet.purchaseNode()
         }
-        if (upgradecount >= upgradedelay) {
-            await growNet(ns)
-            upgradecount = 0
-        } else {
-            upgradecount = upgradecount + 1
-        }
+        await growNet(ns)
         await reporting(ns)
-        await ns.sleep(30000)
+        await ns.sleep(5000)
     }
 }
 
@@ -44,11 +37,11 @@ async function growNet(ns) {
     let hacknetCost = await -ns.getMoneySources().sinceInstall.hacknet_expenses
     let hacknetProfit = hacknetEarnings - hacknetCost
     let money = await ns.getPlayer().money
-    if (hacknetEarnings > (1.1 * hacknetCost)) {
+    if (hacknetEarnings > (1.0 * hacknetCost)) {
         let newServerCost = ns.hacknet.getPurchaseNodeCost()
-        if (numberServers < maxServers && hacknetProfit > (1.1 * newServerCost)) {
+        if (numberServers < maxServers && hacknetProfit > (2.4 * newServerCost)) {
             ns.print("Attempt to purchase new server")
-            if (money > 100 * newServerCost) {
+            if (newServerCost < money * ( ( 1 / ( numberServers ^ 2 ) ) + ( 1 - numberServers / ( numberServers + 1 ) ) ) ) {
                 await ns.hacknet.purchaseNode()
             }
         }
@@ -58,19 +51,19 @@ async function growNet(ns) {
         if (randomiseUpgrade < 0.1) {
             let cost = await ns.hacknet.getCoreUpgradeCost(randomServer)
             ns.print("Attempt to upgrade Core, cost" + cost + " prod: " + totalProduction)
-            if (money >= 100 * cost && totalProduction > cost) {
+            if (cost < money * ( ( 1 / ( numberServers ^ 2 ) ) + ( 1 - numberServers / ( numberServers + 1 ) ) ) && totalProduction > cost) {
                 await ns.hacknet.upgradeCore(randomServer)
             }
         } else if (randomiseUpgrade < .35) {
             let cost = await ns.hacknet.getRamUpgradeCost(randomServer)
             ns.print("Attempt to upgrade RAM, cost: " + cost + " prod: " + totalProduction)
-            if (money >= 100 * cost && totalProduction > cost) {
+            if (cost < money * ( ( 1 / ( numberServers ^ 2 ) ) + ( 1 - numberServers / ( numberServers + 1 ) ) ) && totalProduction > cost) {
                 await ns.hacknet.upgradeRam(randomServer)
             }
         } else {
             let cost = await ns.hacknet.getLevelUpgradeCost(randomServer)
             ns.print("Attempt to upgrade Level, cost: " + cost + " prod: " + totalProduction)
-            if (money >= 100 * cost && totalProduction > cost) {
+            if (cost < money * ( ( 1 / ( numberServers ^ 2 ) ) + ( 1 - numberServers / ( numberServers + 1 ) ) ) && totalProduction > cost) {
                 await ns.hacknet.upgradeLevel(randomServer)
             }
         }
