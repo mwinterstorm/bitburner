@@ -7,15 +7,18 @@ export async function main(ns) {
     while (avesync < 100) {
         let sleeveArr = getSleeves(ns)
         let sleeve = sleeveArr[Math.floor(Math.random() * sleeveArr.length)]
+        let waitModifier = (Math.random() / 10)
         if (Math.random() > (sleeve.sync / 100)) {
             let returnmsg = await sleeveSync(ns, sleeveArr)
             avesync = returnmsg.avesync
-            ns.print("Initialising SYNC " + returnmsg.report)
+            wait = parseInt((wait * .93) +waitModifier)
+            ns.print("Initialising " + returnmsg.type + " for " + ns.formatNumber(wait,1,1000) + " secs - "+ returnmsg.report)
             await ns.sleep(wait * 1000)
-        } else if (Math.random() < (sleeve.shock / 100) && sleeve.shock > 90) {
+        } else if (Math.random() < (sleeve.shock / 100) && Math.random() < (sleeve.shock / 150)) {
             let returnmsg = await sleeveSync(ns, sleeveArr)
             avesync = returnmsg.avesync
-            ns.print("Initialising SHOCK " + returnmsg.report)
+            wait = parseInt((wait * .92) +waitModifier)
+            ns.print("Initialising " + returnmsg.type + " for " + ns.formatNumber(wait,1,1000) + " secs - "+ returnmsg.report)
             await ns.sleep(wait * 1000)
         } else {
             let returnmsg = await randomCrime(ns, sleeveArr)
@@ -52,6 +55,7 @@ async function sleeveSync(ns, sleeveArr) { //when less than 100% synced will syn
     // max sync
     let avesync = 0
     let aveshock = 0
+    let type
     for (let s = 0; s < sleeveArr.length; s++) {
         let sleeve = sleeveArr[s]
         if (sleeve.sync < 100) {
@@ -60,12 +64,20 @@ async function sleeveSync(ns, sleeveArr) { //when less than 100% synced will syn
             }
             avesync = avesync + sleeve.sync
             aveshock = aveshock + sleeve.shock
+            type = "SYNC"
         } else if (sleeve.shock >= 90) {
             if (sleeve.task.type != "RECOVERY") {
                 await ns.sleeve.setToShockRecovery(sleeve.number) 
             }
             avesync = avesync + sleeve.sync
             aveshock = aveshock + sleeve.shock
+        } else if (Math.random() < (sleeve.shock / 100)^2) {
+            if (sleeve.task.type != "RECOVERY") {
+                await ns.sleeve.setToShockRecovery(sleeve.number) 
+            }
+            avesync = avesync + sleeve.sync
+            aveshock = aveshock + sleeve.shock
+            type = "SHOCK"
         } else {
             avesync = avesync + sleeve.sync
             aveshock = aveshock + sleeve.shock
@@ -73,10 +85,11 @@ async function sleeveSync(ns, sleeveArr) { //when less than 100% synced will syn
     }
     avesync = avesync / sleeveArr.length
     aveshock = aveshock / sleeveArr.length
-    let report = "AVESYNC: " + ns.formatNumber(avesync,1,1000) + "%; AVESHOCK: " + ns.formatNumber(aveshock, 1, 1000) + "%; NUMBERSLEEVES: " + sleeveArr.length
+    let report = "AVE SYNC: " + ns.formatNumber(avesync,1,1000) + "% |SHOCK: " + ns.formatNumber(aveshock, 1, 1000) + "%; SLEEVES: " + sleeveArr.length
     let returnmsg = {
         "report": report,
-        "avesync": avesync
+        "avesync": avesync,
+        "type": type
     }
     return returnmsg
 }
@@ -107,4 +120,18 @@ async function randomCrime(ns, sleeveArr) { // converts one random sleeve into c
     }
     return returnmsg
 }
+
+// async function randomCrime(ns, sleeveArr) { // converts one random sleeve into crime
+//     const crimes = ns.getPlayer().jobs
+//     let sleeveSelect = Math.floor(Math.random() * sleeveArr.length)
+//     let crimeSelect = Math.floor(Math.random() * crimes.length)
+//     await ns.sleeve.setToCommitCrime(sleeveSelect,crimes[crimeSelect])
+//     let wait = (ns.sleeve.getTask(sleeveSelect).cyclesNeeded / 5) 
+//     let report =  "Waiting " + wait + "s while committing " + crimes[crimeSelect]
+//     let returnmsg = {
+//         "report": report,
+//         "wait": wait
+//     }
+//     return returnmsg
+// }
 

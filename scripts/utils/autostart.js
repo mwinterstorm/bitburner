@@ -23,6 +23,11 @@ export async function main(ns) {
     await ns.tprint("...waiting to crawl servers...")
     await ns.sleep(5000)
 
+    // SLEEVES
+    await ns.tprint("Starting SLEEVES...")
+    await ns.run("sleeves/sleeveControl.js");
+    await ns.sleep(780)
+
     // CORPORATION
     if (ns.corporation.hasCorporation()) {
         await ns.tprint("Starting CORPORATION CONTROLER...")
