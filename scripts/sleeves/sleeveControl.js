@@ -4,27 +4,43 @@ export async function main(ns) {
     ns.tail()
     let avesync = 0
     let wait = 60 // in seconds
-    while (avesync < 100) {
+    while (true) {
         let sleeveArr = getSleeves(ns)
-        let sleeve = sleeveArr[Math.floor(Math.random() * sleeveArr.length)]
-        let waitModifier = (Math.random() / 10)
-        if (Math.random() > (sleeve.sync / 100)) {
-            let returnmsg = await sleeveSync(ns, sleeveArr)
-            avesync = returnmsg.avesync
-            wait = parseInt((wait * .93) +waitModifier)
-            ns.print("Initialising " + returnmsg.type + " for " + ns.formatNumber(wait,1,1000) + " secs - "+ returnmsg.report)
-            await ns.sleep(wait * 1000)
-        } else if (Math.random() < (sleeve.shock / 100) && Math.random() < (sleeve.shock / 150)) {
-            let returnmsg = await sleeveSync(ns, sleeveArr)
-            avesync = returnmsg.avesync
-            wait = parseInt((wait * .92) +waitModifier)
-            ns.print("Initialising " + returnmsg.type + " for " + ns.formatNumber(wait,1,1000) + " secs - "+ returnmsg.report)
-            await ns.sleep(wait * 1000)
-        } else {
-            let returnmsg = await randomCrime(ns, sleeveArr)
-            ns.print(returnmsg.report)
-            wait = returnmsg.wait
-            await ns.sleep(wait * 1000 + 150)
+        for (let s = 0; s < sleeveArr.length; s++) {
+            let sNum = sleeveArr[s].number
+            let waitModifier = (Math.random() / 10)
+            if (Math.random() > (sleeveArr[sNum].sync / 100)) {
+                let returnmsg = await sleeveSync(ns, sleeveArr[sNum])
+                wait = parseInt((wait * .93) + waitModifier)
+                let time = getTime()
+                ns.print(time + " - Initialising " + returnmsg.type + " for " + ns.formatNumber(wait, 1, 1000) + " secs - " + returnmsg.report)
+                await ns.sleep(wait * 1000)
+            } else if (Math.random() < (sleeveArr[sNum].shock / 100) && Math.random() < (sleeveArr[sNum].shock / 150)) {
+                let returnmsg = await sleeveSync(ns, sleeveArr[sNum])
+                wait = parseInt((wait * .92) + waitModifier)
+                let time = getTime()
+                ns.print(time + " - Initialising " + returnmsg.type + " for " + ns.formatNumber(wait, 1, 1000) + " secs - " + returnmsg.report)
+                await ns.sleep(wait * 1000)
+            } else if (ns.heart.break() > -54000 && Math.random() < 0.70) {
+                let returnmsg = await randomCrime(ns, sleeveArr[sNum])
+                let time = getTime()
+                ns.print(time + " - " + returnmsg.report)
+                wait = returnmsg.wait
+                await ns.sleep(wait * 1000 + 150)
+            } else if (Object.keys(ns.getPlayer().jobs).length > 0) {
+                let returnmsg = await randomCompany(ns, sleeveArr[sNum])
+                let time = getTime()
+                wait = (wait * .95) + waitModifier
+                let report = " - Waiting " + ns.formatNumber(wait,1,1000) + "s while working at " + returnmsg.job
+                ns.print(time + " - " + report)
+                await ns.sleep(wait * 1000)
+            } else {
+                let returnmsg = await randomCrime(ns, sleeveArr[sNum])
+                let time = getTime()
+                ns.print(time + " - " + returnmsg.report)
+                wait = returnmsg.wait
+                await ns.sleep(wait * 1000 + 150)
+            }
         }
     }
 }
@@ -51,50 +67,36 @@ function getSleeves(ns) { //returns an array of each sleeve
     return sleeveArr
 }
 
-async function sleeveSync(ns, sleeveArr) { //when less than 100% synced will sync, then will reduce shock to under 90%
+async function sleeveSync(ns, sleeve) { //when less than 100% synced will sync, then will reduce shock to under 90%
     // max sync
-    let avesync = 0
-    let aveshock = 0
     let type
-    for (let s = 0; s < sleeveArr.length; s++) {
-        let sleeve = sleeveArr[s]
-        if (sleeve.sync < 100) {
-            if (sleeve.task.type != "SYNCHRO") {
-                await ns.sleeve.setToSynchronize(sleeve.number)
-            }
-            avesync = avesync + sleeve.sync
-            aveshock = aveshock + sleeve.shock
-            type = "SYNC"
-        } else if (sleeve.shock >= 90) {
-            if (sleeve.task.type != "RECOVERY") {
-                await ns.sleeve.setToShockRecovery(sleeve.number) 
-            }
-            avesync = avesync + sleeve.sync
-            aveshock = aveshock + sleeve.shock
-        } else if (Math.random() < (sleeve.shock / 100)^2) {
-            if (sleeve.task.type != "RECOVERY") {
-                await ns.sleeve.setToShockRecovery(sleeve.number) 
-            }
-            avesync = avesync + sleeve.sync
-            aveshock = aveshock + sleeve.shock
-            type = "SHOCK"
-        } else {
-            avesync = avesync + sleeve.sync
-            aveshock = aveshock + sleeve.shock
+    if (sleeve.sync < 100) {
+        if (sleeve.task.type != "SYNCHRO") {
+            await ns.sleeve.setToSynchronize(sleeve.number)
         }
+        type = "SYNC"
+    } else if (sleeve.shock >= 90) {
+        if (sleeve.task.type != "RECOVERY") {
+            await ns.sleeve.setToShockRecovery(sleeve.number)
+        }
+        type = "SHOCK"
+    } else if (Math.random() < (sleeve.shock / 100) ^ 2) {
+        if (sleeve.task.type != "RECOVERY") {
+            await ns.sleeve.setToShockRecovery(sleeve.number)
+        }
+        type = "SHOCK"
     }
-    avesync = avesync / sleeveArr.length
-    aveshock = aveshock / sleeveArr.length
-    let report = "AVE SYNC: " + ns.formatNumber(avesync,1,1000) + "% |SHOCK: " + ns.formatNumber(aveshock, 1, 1000) + "%; SLEEVES: " + sleeveArr.length
     let returnmsg = {
-        "report": report,
-        "avesync": avesync,
-        "type": type
+        "report": "SLEEVE: " + sleeve.number + " SYNC: " + ns.formatNumber(sleeve.sync, 1, 1000) + "% | SHOCK: " + ns.formatNumber(sleeve.shock, 1, 1000) + "%",
+        "number": sleeve.number,
+        "type": type,
+        "sync": sleeve.sync,
+        "shock": sleeve.shock
     }
     return returnmsg
 }
 
-async function randomCrime(ns, sleeveArr) { // converts one random sleeve into crime
+async function randomCrime(ns, sleeve) { // converts one random sleeve into crime
     const crimes = [
         "Assassination",
         "Bond Forgery",
@@ -109,11 +111,10 @@ async function randomCrime(ns, sleeveArr) { // converts one random sleeve into c
         "Shoplift",
         "Traffick Arms"
     ]
-    let sleeveSelect = Math.floor(Math.random() * sleeveArr.length)
     let crimeSelect = Math.floor(Math.random() * crimes.length)
-    await ns.sleeve.setToCommitCrime(sleeveSelect,crimes[crimeSelect])
-    let wait = (ns.sleeve.getTask(sleeveSelect).cyclesNeeded / 5) 
-    let report =  "Waiting " + wait + "s while committing " + crimes[crimeSelect]
+    await ns.sleeve.setToCommitCrime(sleeve.number, crimes[crimeSelect])
+    let wait = (ns.sleeve.getTask(sleeve.number).cyclesNeeded / 5)
+    let report = "Waiting " + wait + "s while committing " + crimes[crimeSelect]
     let returnmsg = {
         "report": report,
         "wait": wait
@@ -121,17 +122,28 @@ async function randomCrime(ns, sleeveArr) { // converts one random sleeve into c
     return returnmsg
 }
 
-// async function randomCrime(ns, sleeveArr) { // converts one random sleeve into crime
-//     const crimes = ns.getPlayer().jobs
-//     let sleeveSelect = Math.floor(Math.random() * sleeveArr.length)
-//     let crimeSelect = Math.floor(Math.random() * crimes.length)
-//     await ns.sleeve.setToCommitCrime(sleeveSelect,crimes[crimeSelect])
-//     let wait = (ns.sleeve.getTask(sleeveSelect).cyclesNeeded / 5) 
-//     let report =  "Waiting " + wait + "s while committing " + crimes[crimeSelect]
-//     let returnmsg = {
-//         "report": report,
-//         "wait": wait
-//     }
-//     return returnmsg
-// }
+async function randomCompany(ns, sleeve) { // converts one random sleeve into crime
+    const jobs = Object.keys(ns.getPlayer().jobs)
+    let jobselect = Math.floor(Math.random() * jobs.length)
+    await ns.sleeve.setToCompanyWork(sleeve.number, jobs[jobselect])
+    let returnmsg = {
+        "job": jobs[jobselect]
+    }
+    return returnmsg
+}
 
+
+function getTime() {
+    const d = new Date();
+    let hrs = d.getHours();
+    let hours = hrs;
+    if (hrs <= 9) { hours = "0" + hrs; }
+    let min = d.getMinutes();
+    let minutes = min;
+    if (min <= 9) { minutes = "0" + min; }
+    let sec = d.getSeconds();
+    let seconds = sec;
+    if (sec <= 9) { seconds = "0" + sec; }
+    let formattedTime = hours + ':' + minutes + ':' + seconds;
+    return formattedTime
+}

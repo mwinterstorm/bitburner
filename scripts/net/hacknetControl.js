@@ -60,7 +60,7 @@ async function growNet(ns) {
             if (cost < money * ( ( 1 / ( numberServers ^ 2 ) ) + ( 1 - numberServers / ( numberServers + 1 ) ) ) && totalProduction > cost) {
                 await ns.hacknet.upgradeRam(randomServer)
             }
-        } else {
+        } else if (randomiseUpgrade < .94) {
             let cost = await ns.hacknet.getLevelUpgradeCost(randomServer)
             ns.print("Attempt to upgrade Level, cost: " + cost + " prod: " + totalProduction)
             if (cost < money * ( ( 1 / ( numberServers ^ 2 ) ) + ( 1 - numberServers / ( numberServers + 1 ) ) ) && totalProduction > cost) {
