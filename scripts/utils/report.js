@@ -56,12 +56,23 @@ export async function main(ns) {
             let reportHack = "HACK          : $" + ns.formatNumber(hackeps, 1, 1000, true) + "/s | $" + ns.formatNumber(hackaveEarn, 1, 1000, true) + "/s"
 
             //calculate earnings from self.js
-            let selfearnings = ns.readPort(2)
+            let selfearnings = +ns.readPort(2)
             await ns.tryWritePort(2, 0)
             let selfeps = 0;
             let selfaveEarn = 0;
             if (selfearnings != "NULL PORT DATA") {
-                selfeps = (selfearnings * 1000 / (waitTimer / 1000)) / 1000
+                selfeps = parseInt((+selfearnings * 1000 / (+waitTimer / 1000)) / 1000)
+                let selftotalEarn = 0
+                if (selfearnArr.length > elength) {
+                    selfearnArr.shift()
+                }
+                selfearnArr.push(selfearnings)
+                for (let e = 0; e < selfearnArr.length; e++) {
+                    selftotalEarn = selfearnArr[e] + selftotalEarn
+                }
+                selfaveEarn = ((selftotalEarn / selfearnArr.length) / (waitTimer / 1000))
+            } else {
+                selfeps = 0
                 let selftotalEarn = 0
                 if (selfearnArr.length > elength) {
                     selfearnArr.shift()
@@ -72,7 +83,7 @@ export async function main(ns) {
                 }
                 selfaveEarn = ((selftotalEarn / selfearnArr.length) / (waitTimer / 1000))
             }
-            let reportSelf = "SELF          : $" + + ns.formatNumber(parseInt(selfeps), 1, 1000) + "/s | $" + ns.formatNumber(selfaveEarn, 1, 1000) + "/s"
+            let reportSelf = "SELF          : $" + ns.formatNumber(+selfeps, 1, 1000) + "/s | $" + ns.formatNumber(selfaveEarn, 1, 1000) + "/s"
 
             //calculate stock market EPS
             let stockearnings = ns.readPort(3)
@@ -102,7 +113,7 @@ export async function main(ns) {
                 stockValue = +stockobj.overallValue
                 stockNumber = +stockobj.numberStocks
             }
-            let reportTrade = "TRADING       : $" + ns.formatNumber(stockeps, 1, 1000, true) + "/s | $" + ns.formatNumber(stockave, 1, 1000, true) + "/s; Total Value Owned: $" + ns.formatNumber(stockValue, 1, 1000, true) + " in " + ns.formatNumber(stockNumber, 0, 1000, true) + " stocks"
+            let reportTrade = "TRADING       : $" + ns.formatNumber(stockeps, 1, 1000, true) + "/s | $" + ns.formatNumber(stockave, 1, 1000, true) + "/s; Value: $" + ns.formatNumber(stockValue, 1, 1000, true) + " in " + ns.formatNumber(stockNumber, 0, 1000, true) + " stocks"
 
             // gather dividend EPS
             let corpobj = ns.peek(4);
@@ -115,7 +126,7 @@ export async function main(ns) {
             let fraudPrice = 0 //used with corporate fraud below
             if (corpobj != "NULL PORT DATA") {
                 corpobj = JSON.parse(corpobj)
-                dividends =corpobj.dividends
+                dividends = corpobj.dividends
                 funds = corpobj.funds
                 expenses = corpobj.expenses
                 revenue = corpobj.revenue
@@ -129,7 +140,10 @@ export async function main(ns) {
             for (let e = 0; e < divArr.length; e++) {
                 divTotal = divArr[e] + divTotal
             }
-            let divAve = divTotal / divArr.length;
+            let divAve = 0
+            if (divArr.length > 0) {
+                divAve = divTotal / divArr.length;
+            } 
             let reportCorpDiv = "CORP dividends: $" + ns.formatNumber(dividends, 1, 1000, true) + "/s | $" + ns.formatNumber(divAve, 1, 1000, true) + "/s; Income: $" + ns.formatNumber(revenue - expenses, 1, 1000, true) + " | Funds: $" + ns.formatNumber(funds, 1, 1000, true)
 
             //calculate Corporate Fraud
@@ -250,8 +264,8 @@ export async function main(ns) {
             }
 
             // REPORT
-            let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS + hacknet
-            let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve + hacknetAve
+            let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS + hacknetEPS + gang
+            let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve + hacknetAve + gangAve
             let time = getTime()
             let reportTime = time + " - INFO! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins"
             let reportTotal = time + " - SUCCESS! TOTAL: $" + ns.formatNumber(total30, 1, 1000, true) + "/s | $" + ns.formatNumber(totalAve, 1, 1000, true) + "/s"
@@ -259,29 +273,41 @@ export async function main(ns) {
             await ns.print(reportTotal)
             await ns.print(reportTime)
             if (hackaveEarn > 0) {
-                await ns.print(reportHack)
+                let hackpercent = +hackeps / +total30
+                let phackave = +hackaveEarn / +totalAve
+                await ns.print(reportHack + " (" + ns.formatPercent(hackpercent) + "|" + ns.formatPercent(phackave) + ")")
             }
             if (selfaveEarn > 0) {
-                await ns.print(reportSelf)
+                let selfpercent = +selfeps / +total30
+                let pselfave = +selfaveEarn / +totalAve
+                await ns.print(reportSelf + " (" + ns.formatPercent(selfpercent) + "|" + ns.formatPercent(pselfave) + ")")
             }
             if (stockave > 0) {
-                await ns.print(reportTrade)
+                let stockpercent = stockeps / total30
+                let pstock = +stockave / totalAve
+                await ns.print(reportTrade + " (" + ns.formatPercent(stockpercent) + "|" + ns.formatPercent(pstock) + ")")
             } else if (stockNumber > 0) {
-                await ns.print(reportTrade)
+                let stockpercent = stockeps / total30
+                let pstock = +stockave / totalAve
+                await ns.print(reportTrade + " (" + ns.formatPercent(stockpercent) + "|" + ns.formatPercent(pstock) + ")")
             }
             if (ns.corporation.hasCorporation()) {
-                if (divAve > 0) {
-                    await ns.print(reportCorpDiv)
-                }
-                if (fraudAve > 0) {
-                    await ns.print(reportCorpFraud)
-                }
+                let divpercent = dividends / total30
+                let pdiv = divAve / totalAve
+                let fraudpercent = fraudEPS / total30
+                let pfraud = fraudAve / totalAve
+                await ns.print(reportCorpDiv + " (" + ns.formatPercent(divpercent) + "|" + ns.formatPercent(pdiv) + ")")
+                await ns.print(reportCorpFraud + " (" + ns.formatPercent(fraudpercent) + "|" + ns.formatPercent(pfraud) + ")")
             }
             if (gangAve > 0) {
-                await ns.print(reportGang)
+                let gangpercent = gang / total30
+                let pgang = gangAve / totalAve
+                await ns.print(reportGang + " (" + ns.formatPercent(gangpercent) + "|" + ns.formatPercent(pgang) + ")")
             }
             if (hacknetAve > 0) {
-                await ns.print(reportHackNet)
+                let hacknetpercent = hacknetEPS / total30
+                let pnet = hacknetAve / totalAve
+                await ns.print(reportHackNet + " (" + ns.formatPercent(hacknetpercent) + "|" + ns.formatPercent(pnet) + ")")
             }
             if (shareAve > 0) {
                 await ns.print(reportShare)

@@ -1,22 +1,29 @@
-/** @param {NS} ns */
 export async function main(ns) {
-    // ns.tail()
+    ns.tail()
+    ns.disableLog("ALL");
+    /** @param {NS} ns */
     const minSleep = 30 //time in sec to min sleep between runs
     const maxSleep = 60 //time in sec to min sleep between runs
     while (true) {
-        await reportDividends(ns);
+        let status = await reportDividends(ns);
         await tendProducts(ns);
-        await commitInsiderTrading(ns);
+        if (status.saleCool != 0) {
+            await buyBackShares(ns);
+        } else {
+            await commitInsiderTrading(ns);
+            await buyBackShares(ns);
+        }
         let sleep = Math.floor(Math.random() * maxSleep);
         if (sleep <= minSleep) {
             sleep = 30;
         }
+        // ns.print("Sleeping for " + ns.formatNumber(sleep, 0, 1000) + "s")
         await ns.sleep(sleep * 1000);
     }
 }
 
 async function reportDividends(ns) {
-    let corporation = ns.corporation.getCorporation();    
+    let corporation = ns.corporation.getCorporation();
     // Dividends for reporting
     let dividends = corporation.dividendEarnings
     let funds = corporation.funds
@@ -35,6 +42,44 @@ async function reportDividends(ns) {
     let string = JSON.stringify(obj);
     await ns.clearPort(4);
     await ns.tryWritePort(4, string);
+    return obj
+}
+
+async function buyBackShares(ns) {
+    let corporation = ns.corporation.getCorporation()
+    let myShares = corporation.numShares
+    let totalShares = corporation.totalShares
+    let buyback
+    if (myShares < totalShares) {
+        ns.corporation.issueDividends(1)
+        let outstandingShares = totalShares - myShares
+        let purchasePrice = corporation.sharePrice;
+        let money = await ns.getPlayer().money * (1 - (Math.random() / 4))
+        let purchaseshares = Math.floor(money / (purchasePrice * 1.1))
+        if (purchaseshares > outstandingShares) {
+            purchaseshares = outstandingShares
+            // ns.print(purchaseshares)
+            await ns.corporation.buyBackShares(purchaseshares);
+            let time = getTime()
+            let report = time + " - " + ns.formatNumber(purchaseshares, 3, 1000, true) + " shares purchased at $" + ns.formatNumber(purchasePrice, 2, 1000) + " ($" + ns.formatNumber(purchasePrice * purchaseshares, 2, 1000) + " total), " + ns.formatNumber((outstandingShares - purchaseshares), 3, 1000, true) + " (" + ns.formatPercent((1 - (myShares + purchaseshares) / totalShares)) + ") outstanding"
+            ns.print(report)
+        } else if (purchaseshares <= 0) {
+            // ns.print(purchaseshares)
+            let time = getTime()
+            ns.print(time + " - Not enough $$$: " + ns.formatNumber((outstandingShares - purchaseshares), 3, 1000, true) + " (" + ns.formatPercent((1 - (myShares + purchaseshares)) / totalShares) + ") outstanding")
+        } else {
+            // ns.print(purchaseshares)
+            await ns.corporation.buyBackShares(purchaseshares);
+            let time = getTime()
+            let report = time + " - " + ns.formatNumber(purchaseshares, 3, 1000, true) + " shares purchased at $" + ns.formatNumber(purchasePrice, 2, 1000) + " ($" + ns.formatNumber(purchasePrice * purchaseshares, 2, 1000) + " total), " + ns.formatNumber((outstandingShares - purchaseshares), 3, 1000, true) + " (" + ns.formatPercent((1 - (myShares + purchaseshares) / totalShares)) + ") outstanding"
+            ns.print(report)
+        }
+        buyback = true
+    } else {
+        ns.corporation.issueDividends(.05)
+        buyback = false
+    }
+    return buyback
 }
 
 async function tendProducts(ns) {
@@ -110,9 +155,10 @@ async function commitInsiderTrading(ns) {
     let salePrice = corporation.sharePrice;
     let saleShares = myShares - 1;
     const spenders = [
-        "stocks/trade.js",
+        "hacks/purchase.js",
+        "net/hacknetControl.js",
         "stocks/earlyTrade.js",
-        "hacks/purchase.js"
+        "stocks/trade.js"
     ]
 
     // MARKET MANIPULATION
@@ -141,7 +187,13 @@ async function commitInsiderTrading(ns) {
         await ns.corporation.sellShares(saleShares);
         corporation = await ns.corporation.getCorporation();
         let purchasePrice = corporation.sharePrice;
-        await ns.corporation.buyBackShares(saleShares);
+        let money = await ns.getPlayer().money * (1 - (Math.random() / 10))
+        let purchaseshares = saleShares
+        let maxPurchase = Math.floor(money / (purchasePrice * 1.1))
+        if (purchaseshares > maxPurchase) {
+            purchaseshares = maxPurchase
+        }
+        await ns.corporation.buyBackShares(purchaseshares);
         corporation = await ns.corporation.getCorporation();
         let finalShares = corporation.numShares;
         cooldown = (corporation.shareSaleCooldown * 10) + 10000;

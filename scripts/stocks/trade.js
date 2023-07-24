@@ -51,7 +51,7 @@ function tendStocks(ns) {
                 let time = getTime()
                 let report = time + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
-                ns.tryWritePort(8, report)
+                // ns.tryWritePort(8, report)
                 let currentEarnings = ns.readPort(3);
                 if (currentEarnings != "NULL PORT DATA") {
                     let totalEarnings = currentEarnings + saleProfit
@@ -76,7 +76,7 @@ function tendStocks(ns) {
                 let time = getTime()
                 let report = time + ` - SUCCESS ${stock.summary} SHORT SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
                 ns.print(report)
-                ns.tryWritePort(8, report)
+                // ns.tryWritePort(8, report)
                 let currentEarnings = ns.readPort(3);
                 if (currentEarnings != "NULL PORT DATA") {
                     let totalEarnings = currentEarnings + saleProfit
@@ -97,7 +97,7 @@ function tendStocks(ns) {
                     let time = getTime()
                     let report = time + ` - WARN ${stock.summary} LONG BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
                     ns.print(report);
-                    ns.tryWritePort(8, report);    
+                    // ns.tryWritePort(8, report);    
                     tradeMoney -= (sharesToBuy * stock.askPrice) + commission;
                     overallValue += (sharesToBuy * stock.askPrice);
                     numberStocks += 1;
@@ -113,7 +113,7 @@ function tendStocks(ns) {
                     let time = getTime()
                     let report = time + ` - WARN ${stock.summary} SHORT BOUGHT ${ns.formatNumber(sharesToBuy, 4, 1000, true)}`;
                     ns.print(report);
-                    ns.tryWritePort(8, report);    
+                    // ns.tryWritePort(8, report);    
                     tradeMoney = tradeMoney - ((sharesToBuy * stock.bidPrice) + commission)
                     overallValue += (sharesToBuy * stock.bidPrice)
                     numberStocks += 1
