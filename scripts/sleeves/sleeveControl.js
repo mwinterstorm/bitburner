@@ -10,25 +10,25 @@ export async function main(ns) {
             let sNum = sleeveArr[s].number
             let city = sleeveArr[s].city
             let waitModifier = (Math.random() * 10)
-            if (Math.random() > (sleeveArr[sNum].sync / 100)) { //initialise 
+            if (Math.random() > (sleeveArr[sNum].sync / 100)) { // initialise 
                 let returnmsg = await sleeveSync(ns, sleeveArr[sNum])
                 wait = parseInt((wait * .93) + waitModifier)
                 let time = getTime()
                 ns.print(time + " - Initialising " + returnmsg.type + " for " + ns.formatNumber(wait, 1, 1000) + " secs - " + returnmsg.report)
                 await ns.sleep(wait * 1000)
-            } else if (Math.random() < (sleeveArr[sNum].shock / 100) && Math.random() < (sleeveArr[sNum].shock / 150)) { //initialise 
+            } else if (Math.random() < (sleeveArr[sNum].shock / 100) && Math.random() < (sleeveArr[sNum].shock / 150)) { // initialise 
                 let returnmsg = await sleeveSync(ns, sleeveArr[sNum])
                 wait = parseInt((wait * .92) + waitModifier)
                 let time = getTime()
                 ns.print(time + " - Initialising " + returnmsg.type + " for " + ns.formatNumber(wait, 1, 1000) + " secs - " + returnmsg.report)
                 await ns.sleep(wait * 1000)
-            } else if (ns.heart.break() > -54000 && Math.random() < 0.70) { // 70% change to commit crime if cannot yet start a gang
+            } else if (ns.heart.break() > -54000 && Math.random() < 0.70) { // 66% change to commit crime if cannot yet start a gang
                 let returnmsg = await randomCrime(ns, sleeveArr[sNum])
                 let time = getTime()
                 ns.print(time + " - " + returnmsg.report)
                 wait = returnmsg.wait
                 await ns.sleep(wait * 1000 + 150)
-            } else if (Object.keys(ns.getPlayer().jobs).length > 0 && Math.random() < 0.66) { // 66% chance to work in Company
+            } else if (Object.keys(ns.getPlayer().jobs).length > 0 && Math.random() < 0.66) { // then 66% chance to work in Company
                 let returnmsg = await randomCompany(ns, sleeveArr[sNum])
                 let time = getTime()
                 wait = (wait * .95) + waitModifier
@@ -40,21 +40,20 @@ export async function main(ns) {
                 let report = " - Waiting " + ns.formatNumber(wait, 1, 1000) + "s while working at " + returnmsg.job
                 ns.print(time + report)
                 await ns.sleep(wait * 1000)
-            } else if (Math.random() < 0.4) { //40% chance to train physical (this is 50/50 between physical and mental if gets to here)
+            } else if (Math.random() < 0.66) { // then 66% chance to train physical 
                 let physical = await trainPhysical(ns, sNum, city)
                 let time = getTime()
                 wait = physical.wait
                 let report = " - Waiting " + ns.formatNumber(wait, 1, 1000) + "s while training " + physical.training
                 ns.print(time + report)
                 await ns.sleep(wait * 1000)
-            } else if (Math.random() < 0.66) { //66% change to train mental (this is 50/50 between physical and mental if gets to here))
+            } else if (Math.random() < 0.66) { // then 66% change to train mental 
                 let mental = await trainMental(ns, sNum, city)
                 let time = getTime()
                 wait = mental.wait
                 let report = " - Waiting " + ns.formatNumber(wait, 1, 1000) + "s while training " + mental.training
                 ns.print(time + report)
                 await ns.sleep(wait * 1000)
-
             } else { // otherwise commit crime
                 let returnmsg = await randomCrime(ns, sleeveArr[sNum])
                 let time = getTime()
@@ -227,14 +226,14 @@ async function trainMental(ns, sNum, city) {
         if (unis.hasOwnProperty(city)) {
             let wait = Math.floor(60 * Math.random()) + 5
             let uni = unis[city]
-            let course = mental[Math.floor(Math.random() * mental.length)]
             let skills = Object.keys(mental)
-            let skill = skills.indexOf(course)
+            let skill = skills[Math.floor(Math.random() * skills.length)]
+            let course = mental[skill]
             await ns.sleeve.setToUniversityCourse(sNum, uni, course)
             isTraining = true
             let training = {
                 "wait": wait,
-                "training": mental[skill]
+                "training": skill
             }
             return training
         } else {

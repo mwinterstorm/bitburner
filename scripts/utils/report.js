@@ -58,32 +58,23 @@ export async function main(ns) {
             //calculate earnings from self.js
             let selfearnings = +ns.readPort(2)
             await ns.tryWritePort(2, 0)
-            let selfeps = 0;
-            let selfaveEarn = 0;
+            let selfeps;
             if (selfearnings != "NULL PORT DATA") {
                 selfeps = parseInt((+selfearnings * 1000 / (+waitTimer / 1000)) / 1000)
-                let selftotalEarn = 0
-                if (selfearnArr.length > elength) {
-                    selfearnArr.shift()
-                }
-                selfearnArr.push(selfearnings)
-                for (let e = 0; e < selfearnArr.length; e++) {
-                    selftotalEarn = selfearnArr[e] + selftotalEarn
-                }
-                selfaveEarn = ((selftotalEarn / selfearnArr.length) / (waitTimer / 1000))
             } else {
                 selfeps = 0
-                let selftotalEarn = 0
-                if (selfearnArr.length > elength) {
-                    selfearnArr.shift()
-                }
-                selfearnArr.push(selfearnings)
-                for (let e = 0; e < selfearnArr.length; e++) {
-                    selftotalEarn = selfearnArr[e] + selftotalEarn
-                }
-                selfaveEarn = ((selftotalEarn / selfearnArr.length) / (waitTimer / 1000))
             }
-            let reportSelf = "SELF          : $" + ns.formatNumber(+selfeps, 1, 1000) + "/s | $" + ns.formatNumber(selfaveEarn, 1, 1000) + "/s"
+            if (selfearnArr.length > elength) {
+                selfearnArr.shift()
+            }
+            selfearnArr.push(selfearnings)
+            let selftotalEarn = 0
+            for (let e = 0; e < selfearnArr.length; e++) {
+                selftotalEarn = selfearnArr[e] + selftotalEarn
+            }
+            let selfaveEarn = 0;
+            selfaveEarn = ((selftotalEarn / selfearnArr.length) / (waitTimer / 1000))
+            let reportSelf = "SELF          : $" + ns.formatNumber(selfeps, 1, 1000) + "/s | $" + ns.formatNumber(selfaveEarn, 1, 1000) + "/s"
 
             //calculate stock market EPS
             let stockearnings = ns.readPort(3)
@@ -143,7 +134,7 @@ export async function main(ns) {
             let divAve = 0
             if (divArr.length > 0) {
                 divAve = divTotal / divArr.length;
-            } 
+            }
             let reportCorpDiv = "CORP dividends: $" + ns.formatNumber(dividends, 1, 1000, true) + "/s | $" + ns.formatNumber(divAve, 1, 1000, true) + "/s; Income: $" + ns.formatNumber(revenue - expenses, 1, 1000, true) + " | Funds: $" + ns.formatNumber(funds, 1, 1000, true)
 
             //calculate Corporate Fraud
@@ -168,18 +159,26 @@ export async function main(ns) {
             // gather gang earnings
             let gang = ns.peek(10);
             let gangTotal = 0
+            let gangEarn
+            let gangAscend
             if (gang == "NULL PORT DATA") {
-                gang = 0;
+                gangEarn = 0;
+                gangAscend = -1
+            } else {
+                gang = JSON.parse(gang)
+                gangEarn = gang.eps
+                gangAscend = gang.ascend
             }
             if (gangArr.length > elength) {
                 gangArr.shift()
             }
-            gangArr.push(gang)
+            gangArr.push(gangEarn)
             for (let e = 0; e < gangArr.length; e++) {
                 gangTotal = gangArr[e] + gangTotal
             }
             let gangAve = gangTotal / gangArr.length;
-            let reportGang = "GANG          : $" + ns.formatNumber(gang, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s"
+            let ascendReport = "Ascend: " + ns.formatNumber((gangAscend / 1800) * 100, 4, 100, true) + "%"
+            let reportGang = "GANG          : $" + ns.formatNumber(gangEarn, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s; " + ascendReport
 
             // gather hacknet 
             let hacknet = ns.peek(11);
@@ -264,7 +263,7 @@ export async function main(ns) {
             }
 
             // REPORT
-            let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS + hacknetEPS + gang
+            let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS + hacknetEPS + gangEarn
             let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve + hacknetAve + gangAve
             let time = getTime()
             let reportTime = time + " - INFO! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins"
@@ -300,7 +299,7 @@ export async function main(ns) {
                 await ns.print(reportCorpFraud + " (" + ns.formatPercent(fraudpercent) + "|" + ns.formatPercent(pfraud) + ")")
             }
             if (gangAve > 0) {
-                let gangpercent = gang / total30
+                let gangpercent = gangEarn / total30
                 let pgang = gangAve / totalAve
                 await ns.print(reportGang + " (" + ns.formatPercent(gangpercent) + "|" + ns.formatPercent(pgang) + ")")
             }

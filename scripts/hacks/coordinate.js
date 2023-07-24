@@ -62,7 +62,7 @@ export async function main(ns) {
 			let time = getTime();
 			let report = time + " - Running install.js..."
 			ns.print(report)
-			await ns.tryWritePort(8, report)
+			// await ns.tryWritePort(8, report)
 			installCount = 0
 		} else {
 			let time = getTime();
@@ -72,7 +72,7 @@ export async function main(ns) {
 				let time = getTime();
 				let report = time + " - Running install.js..."
 				ns.print(report)
-				await ns.tryWritePort(8, report)
+				// await ns.tryWritePort(8, report)
 				installCount = 0	
 			}
 			ns.print(time + " - Progress to next INSTALL run: " + ns.formatNumber((installCount / (installTrigger)*100), 4, 1000) + "%")

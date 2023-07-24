@@ -10,7 +10,9 @@ export async function main(ns) {
         if (status.saleCool != 0) {
             await buyBackShares(ns);
         } else {
-            await commitInsiderTrading(ns);
+            // await ns.sleep(1800)
+            // await commitInsiderTrading(ns);
+            // await ns.sleep(1800)
             await buyBackShares(ns);
         }
         let sleep = Math.floor(Math.random() * maxSleep);
@@ -186,10 +188,10 @@ async function commitInsiderTrading(ns) {
         // Manipulate Market
         await ns.corporation.sellShares(saleShares);
         corporation = await ns.corporation.getCorporation();
-        let purchasePrice = corporation.sharePrice;
+        let purchasePrice = corporation.sharePrice * 1.1;
         let money = await ns.getPlayer().money * (1 - (Math.random() / 10))
         let purchaseshares = saleShares
-        let maxPurchase = Math.floor(money / (purchasePrice * 1.1))
+        let maxPurchase = Math.floor(money / purchasePrice)
         if (purchaseshares > maxPurchase) {
             purchaseshares = maxPurchase
         }

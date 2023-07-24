@@ -22,7 +22,7 @@ async function reportGang(ns) {
     }
     let string = JSON.stringify(report) // need to edit report.js to send this properly
     await ns.clearPort(10);
-    await ns.tryWritePort(10, eps);
+    await ns.tryWritePort(10, string);
 }
 
 function getTime() {
@@ -87,7 +87,7 @@ async function tendCats(ns) {
         if (Math.random() >= 0.41) {
             let report = time + " Ascension: " + ns.formatNumber((ascendTimer / 1800) * 100, 4, 100, true) + "% to ascension";
             ns.print(report)
-            await ns.tryWritePort(8, report)
+            // await ns.tryWritePort(8, report)
         }
     } else {
         ascendTimer = 0

@@ -9,7 +9,9 @@ export async function main(ns) {
 	let host = "home";
 	var servers = ns.scan(host);
 	var target = ["run4theh111z", "I.I.I.I", "avmnite-02h", "CSEC", "The-Cave"];
-	target.unshift(args);
+	if (args) {
+		target.unshift(args);
+	}
 	await ns.sleep(1000)
 	await setuppass(ns)
 	for (let t = 0; t < target.length; t++) {
@@ -36,10 +38,17 @@ export async function main(ns) {
 			host = servers[i]
 			for (let n = 0; n < nextservers.length; n++) {
 				if (mark == nextservers[n]) {
-					if (ns.hasRootAccess(servers[i]) == true) {
-						ns.print("SUCCESS " + nextservers[n] + " is ROOTED and next to " + host)
+					let serverDetails = ns.getServer(mark)
+					let requiredHack = serverDetails.requiredHackingSkill
+					let backdoor = serverDetails.backdoorInstalled
+					if (backdoor) {
+						ns.print("SUCCESS " + nextservers[n] + " is BACKDOORED and next to " + host)
 					} else {
-						ns.print("FAIL " + nextservers[n] + " is not ROOTED and next to " + host)
+						if (ns.hasRootAccess(servers[i]) == true) {
+							ns.print("WARN " + nextservers[n] + " (LVL: " + requiredHack + ")" + " is ROOTED and next to " + host)
+						} else {
+							ns.print("FAIL " + nextservers[n] + " is not ROOTED and next to " + host)
+						}
 					}
 					target2.push(host)
 					while (target2.length >= 1) {
@@ -64,7 +73,7 @@ export async function main(ns) {
 			host = servers[i]
 			for (let n = 0; n < nextservers.length; n++) {
 				if (mark == nextservers[n]) {
-					ns.print("WARN " + nextservers[n] + " is next to " + host)
+					ns.print(nextservers[n] + " is next to " + host)
 					target2.push(host)
 					let index = target2.indexOf(mark)
 					target2.splice(index, 1)

@@ -20,7 +20,7 @@ async function reportGang(ns) {
     }
     let string = JSON.stringify(report) // need to edit report.js to send this properly
     await ns.clearPort(10);
-    await ns.tryWritePort(10, eps);
+    await ns.tryWritePort(10, string);
 }
 
 async function establishGang(ns) {
