@@ -1,8 +1,7 @@
 /** @param {NS} ns */
 export async function main(ns) {
-    ns.disableLog("ALL");
+    // ns.disableLog("ALL");
     ns.tail()
-    let avesync = 0
     let wait = 60 // in seconds
     while (true) {
         let sleeveArr = getSleeves(ns)
@@ -15,19 +14,22 @@ export async function main(ns) {
                 wait = parseInt((wait * .93) + waitModifier)
                 let time = getTime()
                 ns.print(time + " - Initialising " + returnmsg.type + " for " + ns.formatNumber(wait, 1, 1000) + " secs - " + returnmsg.report)
-                await ns.sleep(wait * 1000)
+                ns.print("main-1")
+                await ns.sleep(((wait * 1000) / sleeveArr.length) + 500)
             } else if (Math.random() < (sleeveArr[sNum].shock / 100) && Math.random() < (sleeveArr[sNum].shock / 150)) { // initialise 
                 let returnmsg = await sleeveSync(ns, sleeveArr[sNum])
                 wait = parseInt((wait * .92) + waitModifier)
                 let time = getTime()
                 ns.print(time + " - Initialising " + returnmsg.type + " for " + ns.formatNumber(wait, 1, 1000) + " secs - " + returnmsg.report)
-                await ns.sleep(wait * 1000)
+                ns.print("main-2")
+                await ns.sleep(((wait * 1000) / sleeveArr.length) + 500)
             } else if (ns.heart.break() > -54000 && Math.random() < 0.70) { // 66% change to commit crime if cannot yet start a gang
                 let returnmsg = await randomCrime(ns, sleeveArr[sNum])
                 let time = getTime()
                 ns.print(time + " - " + returnmsg.report)
                 wait = returnmsg.wait
-                await ns.sleep(wait * 1000 + 150)
+                ns.print("main-3")
+                await ns.sleep((((wait * 1000) + 300) / sleeveArr.length) + 500)
             } else if (Object.keys(ns.getPlayer().jobs).length > 0 && Math.random() < 0.66) { // then 66% chance to work in Company
                 let returnmsg = await randomCompany(ns, sleeveArr[sNum])
                 let time = getTime()
@@ -39,27 +41,31 @@ export async function main(ns) {
                 }
                 let report = " - Waiting " + ns.formatNumber(wait, 1, 1000) + "s while working at " + returnmsg.job
                 ns.print(time + report)
-                await ns.sleep(wait * 1000)
+                ns.print("main-4")
+                await ns.sleep(((wait * 1000) / sleeveArr.length) + 500)
             } else if (Math.random() < 0.66) { // then 66% chance to train physical 
                 let physical = await trainPhysical(ns, sNum, city)
                 let time = getTime()
                 wait = physical.wait
                 let report = " - Waiting " + ns.formatNumber(wait, 1, 1000) + "s while training " + physical.training
                 ns.print(time + report)
-                await ns.sleep(wait * 1000)
+                ns.print("main-5")
+                await ns.sleep(((wait * 1000) / sleeveArr.length) + 500)
             } else if (Math.random() < 0.66) { // then 66% change to train mental 
                 let mental = await trainMental(ns, sNum, city)
                 let time = getTime()
                 wait = mental.wait
                 let report = " - Waiting " + ns.formatNumber(wait, 1, 1000) + "s while training " + mental.training
                 ns.print(time + report)
-                await ns.sleep(wait * 1000)
+                ns.print("main-6")
+                await ns.sleep(((wait * 1000) / sleeveArr.length) + 500)
             } else { // otherwise commit crime
                 let returnmsg = await randomCrime(ns, sleeveArr[sNum])
                 let time = getTime()
                 ns.print(time + " - " + returnmsg.report)
                 wait = returnmsg.wait
-                await ns.sleep(wait * 1000 + 150)
+                ns.print("main-7")
+                await ns.sleep(((wait * 1000 + 150) / sleeveArr.length) + 500)
             }
         }
     }
@@ -184,7 +190,7 @@ async function trainPhysical(ns, sNum, city) {
                 }
             }
             let wait = Math.floor(60 * Math.random()) + 5
-            if (maxValue > minValue) {
+            if (maxValue > minValue && (maxValue - minValue) < 180) {
                 wait = maxValue - minValue + 5
             }
             if (physical.includes(minStat)) {
@@ -199,13 +205,15 @@ async function trainPhysical(ns, sNum, city) {
             } else {
                 let statIndex = playarr.indexOf(minStat, 0)
                 playarr.splice(statIndex, 1)
+                ns.print("phy-1")
+                await ns.sleep(1000)
             }
-            await ns.sleep(wait * 100)
         } else {
             //travel to city
             let cities = Object.keys(gyms)
             let destination = cities[Math.floor(Math.random() * cities.length)]
             await ns.travel(sNum, destination)
+            ns.print("phy-2")
             await ns.sleep(1000)
         }
     }
@@ -241,6 +249,7 @@ async function trainMental(ns, sNum, city) {
             let cities = Object.keys(unis)
             let destination = cities[Math.floor(Math.random() * cities.length)]
             await ns.travel(sNum, destination)
+            ns.print("mental")
             await ns.sleep(1000)
         }
     }

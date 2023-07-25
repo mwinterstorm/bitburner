@@ -3,6 +3,7 @@
 export async function main(ns) {
     ns.tail()
     ns.disableLog("ALL");
+    const args = ns.args[0]
     const corpscripts = [
         "corp/buyback.js",
         "corp/corpControl.js"
@@ -39,6 +40,9 @@ export async function main(ns) {
         let report = time + " - INFO! No Scripts to restart..."
         ns.print(report)
         await ns.tryWritePort(8, report)
+    }
+    if (args == "auto") {
+        await ns.spawn("corp/corpControl.js", 1);
     }
 }
 

@@ -1,25 +1,27 @@
+const divTarget = 0.01
+const fraudScript = "corp/repurchaseFraud.js"
+const minSleep = 30 //time in sec to min sleep between runs
+const maxSleep = 60 //time in sec to min sleep between runs
+
 export async function main(ns) {
     ns.tail()
     ns.disableLog("ALL");
     /** @param {NS} ns */
-    const minSleep = 30 //time in sec to min sleep between runs
-    const maxSleep = 60 //time in sec to min sleep between runs
     while (true) {
         let status = await reportDividends(ns);
         await tendProducts(ns);
         if (status.saleCool != 0) {
             await buyBackShares(ns);
+        } else if (Math.random() < 0.33) {
+            await ns.spawn(fraudScript, 1, "auto");
+            await ns.sleep(10000)
         } else {
-            // await ns.sleep(1800)
-            // await commitInsiderTrading(ns);
-            // await ns.sleep(1800)
             await buyBackShares(ns);
         }
         let sleep = Math.floor(Math.random() * maxSleep);
         if (sleep <= minSleep) {
             sleep = 30;
         }
-        // ns.print("Sleeping for " + ns.formatNumber(sleep, 0, 1000) + "s")
         await ns.sleep(sleep * 1000);
     }
 }
@@ -78,7 +80,7 @@ async function buyBackShares(ns) {
         }
         buyback = true
     } else {
-        ns.corporation.issueDividends(.05)
+        ns.corporation.issueDividends(divTarget)
         buyback = false
     }
     return buyback
@@ -140,116 +142,12 @@ async function tendProducts(ns) {
                 if (!divProds.includes(newName)) {
                     await ns.corporation.makeProduct(divName, city, newName, funds, funds)
                     let time = getTime()
-                    let report = time + " - WARN! " + divName + " is creating product " + newName + " at " + city + " investing $" + 2 * funds;
+                    let report = time + " - WARN! " + divName + " is creating product " + newName + " at " + city + " investing $" + 2 * ns.formatNumber(funds,3,1000);
                     await ns.print(report);
                     await ns.tryWritePort(8, report);
                 }
 
             }
-        }
-    }
-}
-
-async function commitInsiderTrading(ns) {
-    let corporation = ns.corporation.getCorporation();
-    let cooldown = corporation.shareSaleCooldown
-    let myShares = corporation.numShares;
-    let salePrice = corporation.sharePrice;
-    let saleShares = myShares - 1;
-    const spenders = [
-        "hacks/purchase.js",
-        "net/hacknetControl.js",
-        "stocks/earlyTrade.js",
-        "stocks/trade.js"
-    ]
-
-    // MARKET MANIPULATION
-    if (cooldown == 0) {
-
-        // Stop spenders
-        var spendersRunning = [];
-        for (let s = 0; s < spenders.length; s++) {
-            if (ns.scriptRunning(spenders[s], "home")) {
-                await ns.scriptKill(spenders[s], "home");
-                spendersRunning.push(spenders[s])
-            }
-        }
-
-        // Report
-        let time = getTime();
-        let arg = spendersRunning.toString();
-        let report = time + " - INFO! Spenders stopped (" + arg + ")...";
-        ns.print(report)
-        await ns.tryWritePort(8, report)
-        report = time + " - INFO! Starting Repurchase Fraud...";
-        ns.print(report)
-        await ns.tryWritePort(8, report)
-
-        // Manipulate Market
-        await ns.corporation.sellShares(saleShares);
-        corporation = await ns.corporation.getCorporation();
-        let purchasePrice = corporation.sharePrice * 1.1;
-        let money = await ns.getPlayer().money * (1 - (Math.random() / 10))
-        let purchaseshares = saleShares
-        let maxPurchase = Math.floor(money / purchasePrice)
-        if (purchaseshares > maxPurchase) {
-            purchaseshares = maxPurchase
-        }
-        await ns.corporation.buyBackShares(purchaseshares);
-        corporation = await ns.corporation.getCorporation();
-        let finalShares = corporation.numShares;
-        cooldown = (corporation.shareSaleCooldown * 10) + 10000;
-
-        // Report
-        if (finalShares == myShares) {
-            let time = getTime();
-            let profit = (saleShares * salePrice) - (saleShares * purchasePrice);
-            let report = time + " - SUCCESS! Market manipulated and $" + ns.formatNumber(profit, 4, 1000, true) + " stolen";
-            ns.print(report);
-            await ns.tryWritePort(8, report)
-            let currentEarnings = ns.readPort(5);
-            if (currentEarnings != "NULL PORT DATA") {
-                let totalEarnings = currentEarnings + profit
-                await ns.tryWritePort(5, totalEarnings)
-            }
-        } else {
-            let time = getTime();
-            let sharesLost = myShares - finalShares;
-            let profit = (saleShares * salePrice) - ((saleShares - sharesLost) * purchasePrice);
-            let report = time + " - FAIL! Market manipulated and $" + ns.formatNumber(profit, 4, 1000, true) + " stolen but " + ns.formatNumber(sharesLost, 4, 1000, true) + " shares lost";
-            ns.print(report);
-            await ns.tryWritePort(8, report)
-            let currentEarnings = ns.readPort(5);
-            if (currentEarnings != "NULL PORT DATA") {
-                let totalEarnings = currentEarnings + profit
-                await ns.tryWritePort(5, totalEarnings)
-            }
-        }
-
-        // Restart Spenders
-        let startedSpenders = [];
-        if (spendersRunning.length >= 1) {
-            for (let s = 0; s < spendersRunning.length; s++) {
-                if (!ns.scriptRunning(spendersRunning[s], "home")) {
-                    let time = getTime();
-                    let report = time + " - INFO! Starting Spender: " + spendersRunning[s] + "..."
-                    ns.print(report);
-                    await ns.tryWritePort(8, report)
-                    await ns.run(spendersRunning[s], 1);
-                    startedSpenders.push(spendersRunning[s]);
-                }
-            }
-        }
-        if (startedSpenders.length >= 1) {
-            let time = getTime()
-            let report = time + " - INFO! Spenders Restarted: " + startedSpenders
-            ns.print(report)
-            await ns.tryWritePort(8, report)
-        } else {
-            let time = getTime()
-            let report = time + " - INFO! No Spenders to restart..."
-            ns.print(report)
-            await ns.tryWritePort(8, report)
         }
     }
 }
