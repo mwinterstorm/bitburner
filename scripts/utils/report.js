@@ -263,8 +263,8 @@ export async function main(ns) {
             }
 
             // REPORT
-            let total30 = hackeps + selfeps + stockeps + dividends + fraudEPS + hacknetEPS + gangEarn
-            let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + fraudAve + hacknetAve + gangAve
+            let total30 = hackeps + selfeps + stockeps + dividends + hacknetEPS + gangEarn
+            let totalAve = hackaveEarn + selfaveEarn + stockave + divAve + hacknetAve + gangAve
             let time = getTime()
             let reportTime = time + " - INFO! EPS: last " + ns.formatNumber((waitTimer / 1000), 0, 0, true) + "s | last " + ns.formatNumber(((waitTimer / 1000) * earnArr.length) / 60, 1, 1000) + "mins"
             let reportTotal = time + " - SUCCESS! TOTAL: $" + ns.formatNumber(total30, 1, 1000, true) + "/s | $" + ns.formatNumber(totalAve, 1, 1000, true) + "/s"
