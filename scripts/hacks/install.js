@@ -16,7 +16,7 @@ export async function main(ns) {
 	}
 	await ns.sleep(500)
 	for (let i = 0; i < servers.length; i++) {
-		if (servers[i].includes("markwr") == false) {
+		if (servers[i].includes("markwr") == false && servers[i].includes("hacknet") == false) {
 			ns.scp(files, servers[i])
 			let hackreq = ns.getServerRequiredHackingLevel(servers[i])
 			if (ns.hasRootAccess(servers[i]) == true) {
