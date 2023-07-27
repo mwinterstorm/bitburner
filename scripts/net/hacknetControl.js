@@ -5,10 +5,11 @@ export async function main(ns) {
     ns.disableLog("ALL");
     const upgrades = await ns.hacknet.getHashUpgrades()
     while (true) {
+        let wait = Math.random() * 10000
         await raiseCash(ns, upgrades)
         await growNet(ns, upgrades)
         await reporting(ns, upgrades)
-        await ns.sleep(Math.random() * 10000)
+        await ns.sleep(wait)
     }
 }
 
@@ -18,7 +19,7 @@ async function raiseCash(ns, upgrades) {
     let multiplier = 1000000
     let capacity = ns.hacknet.hashCapacity()
     let hashes = ns.hacknet.numHashes()
-    if ((hashes / capacity) > Math.random()) {
+    if ((hashes / capacity) > Math.random() && (hashes / capacity) > .25) {
         let numberServers = await ns.hacknet.numNodes()
         let randomServer = Math.floor(Math.random() * numberServers)
         let cacheCost = ns.hacknet.getCacheUpgradeCost(randomServer, 1)
@@ -33,7 +34,6 @@ async function raiseCash(ns, upgrades) {
             await ns.hacknet.spendHashes(upgrades[0])
         }
         ns.print("SUCCESS! Raised $" + ns.formatNumber(x * multiplier, 3, 1000, true))
-        await ns.sleep(20000)
     } 
 
 }
@@ -50,6 +50,7 @@ async function reporting(ns, upgrades) {
     }
     let report = {
         "totalEPS": totalProd * cashMultiplier,
+        // "totalEPS": eps,
         "totalEarnings": +ns.getMoneySources().sinceInstall.hacknet,
         "totalCost": -ns.getMoneySources().sinceInstall.hacknet_expenses
     }
