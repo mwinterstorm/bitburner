@@ -63,6 +63,8 @@ export async function main(ns) {
   }
 
   while (true) {
+    let overallValue = 0
+    let numberStocks = 0
     await ns.sleep(2000);
 
     if (symLastPrice['FSIG'] === ns.stock.getPrice('FSIG')) {
@@ -114,15 +116,17 @@ export async function main(ns) {
           if (sellPrice > 0) {
             sold = true;
             ns.print(`INFO SOLD (long) ${sym}. Profit: ${format(profit)}`);
-            let currentEarnings = ns.readPort(1);
+            let currentEarnings = ns.readPort(3);
             if (currentEarnings != "NULL PORT DATA") {
               let totalEarnings = currentEarnings + profit
-              ns.tryWritePort(1, totalEarnings)
+              ns.tryWritePort(3, totalEarnings)
             }
           }
         } else {
           longStocks.add(sym);
           ns.print(`${sym} (${ratio}): ${format(profit + cost)} / ${format(profit)} (${Math.round(profit / cost * 10000) / 100}%)`);
+          overallValue = overallValue + (cost + profit)
+          numberStocks = numberStocks + 1
         }
       }
       else if (shortShares > 0) {
@@ -133,10 +137,10 @@ export async function main(ns) {
           if (sellPrice > 0) {
             sold = true;
             ns.print(`INFO SOLD (short) ${sym}. Profit: ${format(profit)}`);
-            let currentEarnings = ns.readPort(1);
+            let currentEarnings = ns.readPort(3);
             if (currentEarnings != "NULL PORT DATA") {
               let totalEarnings = currentEarnings + profit
-              ns.tryWritePort(1, totalEarnings)
+              ns.tryWritePort(3, totalEarnings)
             }
           }
         } else {
@@ -167,67 +171,76 @@ export async function main(ns) {
         }
 
       }
+      let stockInfo = {
+        "overallValue": +overallValue,
+        "numberStocks": +numberStocks
     }
+    let string = JSON.stringify(stockInfo);
+    ns.clearPort(6);
+    ns.tryWritePort(6, string);
 
+    }
+  }
+}
     // send stock market manipulation orders to hack manager
-    var growStockPort = ns.getPortHandle(1); // port 1 is grow
-    var hackStockPort = ns.getPortHandle(2); // port 2 is hack
-    if (growStockPort.empty() && hackStockPort.empty()) {
-      // only write to ports if empty
-      for (const sym of longStocks) {
-        //ns.print("INFO grow " + sym);
-        growStockPort.write(getSymServer(sym));
-      }
-      for (const sym of shortStocks) {
-        //ns.print("INFO hack " + sym);
-        hackStockPort.write(getSymServer(sym));
-      }
-    }
-    // while manipulating the stock market is nice, the early game effect is negligible
-    // since "interesting" stocks can typically not be attacked yet due to low hacking skill 
-    // in my experience actively manipulating "low hack skill" stocks is less effective than trading megacorps
-    // It has more impact starting mid-game where access to 4s is there (use a trader with 4s data)
-    // main use case is the BN8 challenge
-  }
-}
+    // var growStockPort = ns.getPortHandle(1); // port 1 is grow
+    // var hackStockPort = ns.getPortHandle(2); // port 2 is hack
+    // if (growStockPort.empty() && hackStockPort.empty()) {
+//       // only write to ports if empty
+//       // for (const sym of longStocks) {
+//         //ns.print("INFO grow " + sym);
+//         // growStockPort.write(getSymServer(sym));
+//       }
+//       // for (const sym of shortStocks) {
+//         //ns.print("INFO hack " + sym);
+//         // hackStockPort.write(getSymServer(sym));
+//       }
+//     }
+//     // while manipulating the stock market is nice, the early game effect is negligible
+//     // since "interesting" stocks can typically not be attacked yet due to low hacking skill 
+//     // in my experience actively manipulating "low hack skill" stocks is less effective than trading megacorps
+//     // It has more impact starting mid-game where access to 4s is there (use a trader with 4s data)
+//     // main use case is the BN8 challenge
+//   }
+// }
 
-function getSymServer(sym) {
-  const symServer = {
-    "WDS": "",
-    "ECP": "ecorp",
-    "MGCP": "megacorp",
-    "BLD": "blade",
-    "CLRK": "clarkinc",
-    "OMTK": "omnitek",
-    "FSIG": "4sigma",
-    "KGI": "kuai-gong",
-    "DCOMM": "defcomm",
-    "VITA": "vitalife",
-    "ICRS": "icarus",
-    "UNV": "univ-energy",
-    "AERO": "aerocorp",
-    "SLRS": "solaris",
-    "GPH": "global-pharm",
-    "NVMD": "nova-med",
-    "LXO": "lexo-corp",
-    "RHOC": "rho-construction",
-    "APHE": "alpha-ent",
-    "SYSC": "syscore",
-    "CTK": "comptek",
-    "NTLK": "netlink",
-    "OMGA": "omega-net",
-    "JGN": "joesguns",
-    "SGC": "sigma-cosmetics",
-    "CTYS": "catalyst",
-    "MDYN": "microdyne",
-    "TITN": "titan-labs",
-    "FLCM": "fulcrumtech",
-    "STM": "stormtech",
-    "HLS": "helios",
-    "OMN": "omnia",
-    "FNS": "foodnstuff"
-  }
+// function getSymServer(sym) {
+//   const symServer = {
+//     "WDS": "",
+//     "ECP": "ecorp",
+//     "MGCP": "megacorp",
+//     "BLD": "blade",
+//     "CLRK": "clarkinc",
+//     "OMTK": "omnitek",
+//     "FSIG": "4sigma",
+//     "KGI": "kuai-gong",
+//     "DCOMM": "defcomm",
+//     "VITA": "vitalife",
+//     "ICRS": "icarus",
+//     "UNV": "univ-energy",
+//     "AERO": "aerocorp",
+//     "SLRS": "solaris",
+//     "GPH": "global-pharm",
+//     "NVMD": "nova-med",
+//     "LXO": "lexo-corp",
+//     "RHOC": "rho-construction",
+//     "APHE": "alpha-ent",
+//     "SYSC": "syscore",
+//     "CTK": "comptek",
+//     "NTLK": "netlink",
+//     "OMGA": "omega-net",
+//     "JGN": "joesguns",
+//     "SGC": "sigma-cosmetics",
+//     "CTYS": "catalyst",
+//     "MDYN": "microdyne",
+//     "TITN": "titan-labs",
+//     "FLCM": "fulcrumtech",
+//     "STM": "stormtech",
+//     "HLS": "helios",
+//     "OMN": "omnia",
+//     "FNS": "foodnstuff"
+//   }
 
-  return symServer[sym];
+//   return symServer[sym];
 
-}
+// }

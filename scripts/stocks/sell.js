@@ -11,7 +11,8 @@ export async function main(ns) {
 	await ns.sleep(100);
 	ns.moveTail(850, 30)
 	ns.resizeTail(380, 270)
-	while (stocksExist == true) {
+	stocksExist = true
+	while (stocksExist === true) {
 		await ns.scriptKill("stocks/trade.js", "home")
 		await ns.scriptKill("stocks/earlyTrade.js", "home")
 		let allstocks = getAllStocks(ns);
@@ -32,6 +33,7 @@ export async function main(ns) {
 	}
 	let time = getTime();
 	let report = time + " - SUCCESS! All Stocks Sold for $" + ns.formatNumber(TotalValue, 4, 1000, true) + "(Profit: $" + ns.formatNumber(TotalProfit, 4, 1000, true) + ")";
+	ns.print(report);
 }
 
 function tendStocks(ns) {
@@ -51,13 +53,13 @@ function tendStocks(ns) {
 			let time = getTime()
 			let report = time + ` - SUCCESS ${stock.summary} SOLD for ${ns.formatNumber(saleProfit, 4, 1000, true)} profit`;
 			ns.print(report);
-			ns.tryWritePort(8, report)
+			// ns.tryWritePort(8, report)
 			TotalProfit += saleProfit
 			TotalValue += saleTotal
 			let currentEarnings = ns.readPort(1);
 			if (currentEarnings != "NULL PORT DATA") {
 				let totalEarnings = currentEarnings + saleProfit
-				ns.tryWritePort(1, totalEarnings)
+				ns.tryWritePort(3, totalEarnings)
 			}
 		} else if (stock.longShares >= 1) {
 			const saleProfit = ((stock.bidPrice - stock.longPrice) * stock.longShares) - (2 * commission);
@@ -65,7 +67,7 @@ function tendStocks(ns) {
 			let time = getTime();
 			let report = time + ` - FAIL ${stock.summary}: ${ns.formatNumber(saleProfit, 4, 1000, true)} of ${ns.formatNumber(stockValue, 4, 1000, true)}`
 			ns.print(report);
-			ns.tryWritePort(8, report)
+			// ns.tryWritePort(8, report)
 			overallValue += stockValue
 			++StockNumber
 		}
@@ -74,11 +76,11 @@ function tendStocks(ns) {
 	let reportSold = "SELLING: Value sold = $" + ns.formatNumber(TotalValue, 4, 1000, true)
 	let reportProfit = "SELLING: Profit = $" + ns.formatNumber(TotalProfit, 4, 1000, true)
 	ns.print(reportRemain)
-	ns.tryWritePort(8, reportRemain)
+	// ns.tryWritePort(8, reportRemain)
 	ns.print(reportSold)
-	ns.tryWritePort(8, reportSold)
+	// ns.tryWritePort(8, reportSold)
 	ns.print(reportProfit)
-	ns.tryWritePort(8, reportProfit)
+	// ns.tryWritePort(8, reportProfit)
 
 	if (StockNumber == 0) {
 		stocksExist = false

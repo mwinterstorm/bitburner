@@ -53,12 +53,12 @@ export async function main(ns) {
                     wait = wait - (Math.random() * 180)
                 }
                 await ns.sleep(((wait * 1000) / sleeveArr.length))
-            } else if (Math.random() < 0.66) { // then 66% chance to train physical 
-                let physical = await trainPhysical(ns, sNum, city)
+            } else if (Math.random() < 0.66) { // then 66% chance to train mental 
+                let physical = await trainMental(ns, sNum, city)
                 wait = physical.wait
                 await ns.sleep(((wait * 1000) / sleeveArr.length))
-            } else if (Math.random() < 0.66) { // then 66% change to train mental 
-                let mental = await trainMental(ns, sNum, city)
+            } else if (Math.random() < 0.66) { // then 66% change to train physical 
+                let mental = await trainPhysical(ns, sNum, city)
                 wait = mental.wait
                 await ns.sleep(((wait * 1000) / sleeveArr.length))
             } else if (Math.random() < 0.08) { // then 8% chance to randomly travel 
@@ -334,6 +334,9 @@ async function trainMental(ns, sNum, city) { // trains randomly in either hackin
             let uni = unis[city]
             let skills = Object.keys(mental)
             let skill = skills[Math.floor(Math.random() * skills.length)]
+            if (Math.random() > 0.33) {
+                skill = "hacking"
+            }
             let course = mental[skill]
             await ns.sleeve.setToUniversityCourse(sNum, uni, course)
             isTraining = true

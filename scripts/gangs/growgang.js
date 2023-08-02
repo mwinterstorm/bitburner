@@ -47,14 +47,14 @@ async function establishGang(ns) {
         "Romaniac",
         "Cat_Bot_2100",
         "Fluffy",
-        "Cat_Bot_2300",
-        "Cat_Bot_2400",
-        "Cat_Bot_2500",
-        "Cat_Bot_2600",
-        "Cat_Bot_2700",
-        "Cat_Bot_2800",
-        "Cat_Bot_2999",
-        "Cat_Bot_3000"
+        // "Cat_Bot_2300",
+        // "Cat_Bot_2400",
+        // "Cat_Bot_2500",
+        // "Cat_Bot_2600",
+        // "Cat_Bot_2700",
+        // "Cat_Bot_2800",
+        // "Cat_Bot_2999",
+        // "Cat_Bot_3000"
     ];
 
     // recruit members and do easiest task

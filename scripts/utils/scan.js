@@ -8,7 +8,7 @@ export async function main(ns) {
 	let args = ns.args[0];
 	let host = "home";
 	var servers = ns.scan(host);
-	var target = ["run4theh111z", "I.I.I.I", "avmnite-02h", "CSEC", "The-Cave"];
+	var target = [ "CSEC", "avmnite-02h", "I.I.I.I", "run4theh111z", "The-Cave"];
 	if (args) {
 		target.unshift(args);
 	}
@@ -42,23 +42,26 @@ export async function main(ns) {
 					let requiredHack = serverDetails.requiredHackingSkill
 					let backdoor = serverDetails.backdoorInstalled
 					if (backdoor) {
-						ns.print("SUCCESS " + nextservers[n] + " is BACKDOORED and next to " + host)
+						ns.print("SUCCESS " + nextservers[n] + " is BACKDOORED")
+						return
 					} else {
 						if (ns.hasRootAccess(servers[i]) == true) {
 							ns.print("WARN " + nextservers[n] + " (LVL: " + requiredHack + ")" + " is ROOTED and next to " + host)
 						} else {
-							ns.print("FAIL " + nextservers[n] + " is not ROOTED and next to " + host)
+							ns.print("FAIL " + nextservers[n] +  " (LVL: " + requiredHack + ")" + " is not ROOTED and next to " + host)
 						}
+						target2.push(host)
 					}
-					target2.push(host)
-					while (target2.length >= 1) {
-						for (let y = 0; y < target2.length; y++) {
-							if (target2[y] != "home") {
-								await secondpass(target2[y])
-							} else {
-								return
+					if (!backdoor) {
+						while (target2.length >= 1) {
+							for (let y = 0; y < target2.length; y++) {
+								if (target2[y] != "home") {
+									await secondpass(target2[y])
+								} else {
+									return
+								}
+								await ns.sleep(500)
 							}
-							await ns.sleep(500)
 						}
 					}
 

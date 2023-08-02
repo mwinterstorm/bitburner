@@ -181,7 +181,7 @@ export async function main(ns) {
             let reportGang = "GANG          : $" + ns.formatNumber(gangEarn, 1, 1000, true) + "/s | $" + ns.formatNumber(gangAve, 1, 1000, true) + "/s; " + ascendReport
 
             // gather hacknet 
-            let hacknet = ns.peek(11);
+            let hacknet = ns.readPort(11);
             let hacktotal = 0
             let hacknetEPS = 0
             let hacknetProfitPercent = 0
@@ -190,7 +190,7 @@ export async function main(ns) {
                 hacknetProfitPercent = -1
             } else {
                 hacknet = JSON.parse(hacknet)
-                hacknetEPS = hacknet.totalEPS
+                hacknetEPS = hacknet.totalEPS / (waitTimer / 1000)
                 hacknetProfitPercent = (hacknet.totalEarnings / hacknet.totalCost) - 1
             }
             if (hacknetArr.length > elength) {
